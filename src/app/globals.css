@@ -1,26 +1,220 @@
 @import "tailwindcss";
 
+/* Tell Tailwind v4 to use .dark class for dark: variant */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ═══════════════════════════════════════════════
+   LIGHT THEME  (default)
+   Modern light: cool periwinkle-white palette
+═══════════════════════════════════════════════ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-base:        #eef1ff;
+  --bg-surface:     #ffffff;
+  --bg-elevated:    #f4f6ff;
+  --bg-card:        rgba(255, 255, 255, 0.80);
+
+  --border-subtle:  rgba(99, 102, 241, 0.10);
+  --border-default: rgba(99, 102, 241, 0.18);
+
+  --text-primary:   #0c0e1f;
+  --text-secondary: #3c4275;
+  --text-muted:     #7880b0;
+
+  --accent-green:   #10b981;
+  --accent-rose:    #f43f5e;
+  --accent-indigo:  #6366f1;
+
+  --glow-a: rgba(99, 102, 241, 0.10);
+  --glow-b: rgba(168, 85, 247, 0.07);
+
+  --nav-bg:         rgba(255, 255, 255, 0.75);
+  --nav-border:     rgba(99, 102, 241, 0.12);
+  --nav-shadow:     0 4px 32px rgba(15, 23, 70, 0.08);
+
+  --scrollbar-thumb:  rgba(99, 102, 241, 0.18);
+  --scrollbar-hover:  rgba(99, 102, 241, 0.30);
+
+  --btn-primary-bg:   #0c0e1f;
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: rgba(12, 14, 31, 0.05);
+  --btn-secondary-border: rgba(12, 14, 31, 0.14);
+  --btn-secondary-text:   #0c0e1f;
+
+  --social-bg:     rgba(12, 14, 31, 0.05);
+  --social-border: rgba(12, 14, 31, 0.12);
+  --social-color:  #3c4275;
+  --social-hover-color:  #0c0e1f;
+  --social-hover-border: rgba(12, 14, 31, 0.25);
+
+  --ring-color: rgba(99, 102, 241, 0.25);
+  --avatar-bg:  rgba(230, 233, 255, 0.6);
+  --avatar-border: rgba(99, 102, 241, 0.15);
 }
 
+/* ═══════════════════════════════════════════════
+   DARK THEME  (.dark class on <html>)
+   Modern dark: deep cosmic navy-indigo palette
+═══════════════════════════════════════════════ */
+.dark {
+  --bg-base:        #04061a;
+  --bg-surface:     #0b0f2e;
+  --bg-elevated:    #0f1438;
+  --bg-card:        rgba(11, 15, 46, 0.75);
+
+  --border-subtle:  rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.11);
+
+  --text-primary:   #eef0ff;
+  --text-secondary: #9fa8d9;
+  --text-muted:     #5b6390;
+
+  --accent-green:   #34d399;
+  --accent-rose:    #fb7185;
+  --accent-indigo:  #818cf8;
+
+  --glow-a: rgba(99, 102, 241, 0.16);
+  --glow-b: rgba(168, 85, 247, 0.10);
+
+  --nav-bg:         rgba(4, 6, 26, 0.60);
+  --nav-border:     rgba(255, 255, 255, 0.08);
+  --nav-shadow:     0 4px 32px rgba(0, 0, 0, 0.50);
+
+  --scrollbar-thumb:  rgba(255, 255, 255, 0.10);
+  --scrollbar-hover:  rgba(255, 255, 255, 0.22);
+
+  --btn-primary-bg:   rgba(255, 255, 255, 0.06);
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: rgba(255, 255, 255, 0.04);
+  --btn-secondary-border: rgba(255, 255, 255, 0.08);
+  --btn-secondary-text:   #eef0ff;
+
+  --social-bg:     rgba(255, 255, 255, 0.05);
+  --social-border: rgba(255, 255, 255, 0.10);
+  --social-color:  #9fa8d9;
+  --social-hover-color:  #ffffff;
+  --social-hover-border: rgba(255, 255, 255, 0.22);
+
+  --ring-color: rgba(129, 140, 248, 0.30);
+  --avatar-bg:  rgba(15, 20, 56, 0.70);
+  --avatar-border: rgba(255, 255, 255, 0.08);
+}
+
+/* ═══════════════════════════════════════════════
+   Tailwind v4 — expose tokens as utility classes
+═══════════════════════════════════════════════ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-base:      var(--bg-base);
+  --color-surface:   var(--bg-surface);
+  --color-elevated:  var(--bg-elevated);
+  --color-t-primary:   var(--text-primary);
+  --color-t-secondary: var(--text-secondary);
+  --color-t-muted:     var(--text-muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ═══════════════════════════════════════════════
+   Base styles
+═══════════════════════════════════════════════ */
+html { scroll-behavior: smooth; }
+
+*, *::before, *::after {
+  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
 }
+
+/* ═══════════════════════════════════════════════
+   Scrollbar
+═══════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 9999px;
+  border: 2px solid var(--bg-base);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
+
+/* ═══════════════════════════════════════════════
+   Selection
+═══════════════════════════════════════════════ */
+::selection { background: rgba(99, 102, 241, 0.20); color: inherit; }
+
+/* ═══════════════════════════════════════════════
+   Reusable utility classes built on tokens
+═══════════════════════════════════════════════ */
+
+/* Navbar glass capsule */
+.nav-glass {
+  background: var(--nav-bg);
+  border-color: var(--nav-border);
+  box-shadow: var(--nav-shadow);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Active nav item pill */
+.nav-item-active {
+  color: var(--text-primary);
+  background: var(--border-subtle);
+  border: 1px solid var(--border-default);
+}
+.nav-item-inactive {
+  color: var(--text-muted);
+}
+.nav-item-inactive:hover { color: var(--text-primary); }
+
+/* Theme toggle button */
+.theme-btn {
+  background: var(--bg-elevated);
+  border-color: var(--border-default);
+  color: var(--accent-indigo);
+}
+
+/* Primary CTA button */
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: 1px solid transparent;
+}
+.btn-primary:hover {
+  filter: brightness(1.15);
+}
+
+/* Secondary CTA button */
+.btn-secondary {
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  border: 1px solid var(--btn-secondary-border);
+}
+.btn-secondary:hover { filter: brightness(0.93); }
+
+/* Social icon circles */
+.social-icon {
+  background: var(--social-bg);
+  border-color: var(--social-border);
+  color: var(--social-color);
+}
+.social-icon:hover {
+  color: var(--social-hover-color);
+  border-color: var(--social-hover-border);
+}
+
+/* Avatar container */
+.avatar-ring {
+  border-color: var(--ring-color);
+}
+.avatar-inner {
+  background: var(--avatar-bg);
+  border-color: var(--avatar-border);
+}
+
+/* Glow blobs */
+.glow-a { background: var(--glow-a); }
+.glow-b { background: var(--glow-b); }
