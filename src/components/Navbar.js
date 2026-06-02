@@ -13,12 +13,11 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
 
   const navItems = [
-    { name: "Home", href: "#home" },
     { name: "About", href: "#about" },
+    { name: "Tech Stack", href: "#stack" },
     { name: "Skills", href: "#skills" },
-    { name: "Services", href: "#services" },
     { name: "Projects", href: "#projects" },
-    { name: "Contacts", href: "#contacts" },
+    { name: "Contact", href: "#contact" },
   ];
 
   return (
@@ -29,17 +28,20 @@ export default function Navbar() {
           "w-full max-w-6xl rounded-full border px-6 py-3 backdrop-blur-xl transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.15)]",
           theme === "dark"
             ? "border-white/10 bg-[#060814]/40 shadow-indigo-950/20"
-            : "border-zinc-200/80 bg-white/65 shadow-slate-200/40"
+            : "border-zinc-200/80 bg-white/65 shadow-slate-200/40",
         )}
       >
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="#home" className="flex items-center space-x-1.5 text-xl font-bold tracking-wide">
+          <Link
+            href="#home"
+            className="flex items-center space-x-1.5 text-xl font-bold tracking-wide"
+          >
             <span className="text-emerald-400 font-extrabold">&lt;</span>
             <span
               className={clsx(
                 "font-black tracking-wider transition-colors duration-300",
-                theme === "dark" ? "text-white" : "text-zinc-900"
+                theme === "dark" ? "text-white" : "text-zinc-900",
               )}
             >
               RAYHAN
@@ -64,7 +66,7 @@ export default function Navbar() {
                         : "text-zinc-900 bg-zinc-950/5 border border-zinc-950/10 shadow-[0_0_15px_rgba(0,0,0,0.02)]"
                       : theme === "dark"
                         ? "text-zinc-400 hover:text-white"
-                        : "text-zinc-600 hover:text-zinc-900"
+                        : "text-zinc-600 hover:text-zinc-900",
                   )}
                 >
                   {item.name}
@@ -82,7 +84,7 @@ export default function Navbar() {
                 "relative flex items-center justify-center w-10 h-10 rounded-full border transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer",
                 theme === "dark"
                   ? "border-white/10 bg-white/5 text-amber-400 hover:bg-white/10 hover:border-white/20"
-                  : "border-zinc-200 bg-zinc-100/80 text-indigo-600 hover:bg-zinc-200/80 hover:border-zinc-300"
+                  : "border-zinc-200 bg-zinc-100/80 text-indigo-600 hover:bg-zinc-200/80 hover:border-zinc-300",
               )}
               aria-label="Toggle Theme"
             >
@@ -95,7 +97,11 @@ export default function Navbar() {
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="flex items-center justify-center"
                 >
-                  {theme === "dark" ? <Sun size={18} className="stroke-[2]" /> : <Moon size={18} className="stroke-[2]" />}
+                  {theme === "dark" ? (
+                    <Sun size={18} className="stroke-[2]" />
+                  ) : (
+                    <Moon size={18} className="stroke-[2]" />
+                  )}
                 </motion.div>
               </AnimatePresence>
             </button>
@@ -107,7 +113,7 @@ export default function Navbar() {
                 "flex lg:hidden items-center justify-center p-2 rounded-full border transition-all hover:scale-105 cursor-pointer",
                 theme === "dark"
                   ? "border-white/10 bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10"
-                  : "border-zinc-200 bg-zinc-100/80 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/80"
+                  : "border-zinc-200 bg-zinc-100/80 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/80",
               )}
               aria-label="Toggle menu"
             >
@@ -128,7 +134,7 @@ export default function Navbar() {
                 "lg:hidden mt-4 rounded-3xl border p-4 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.25)]",
                 theme === "dark"
                   ? "border-white/5 bg-[#030014]/90 shadow-indigo-950/20"
-                  : "border-zinc-200/80 bg-white/95 shadow-slate-200/30"
+                  : "border-zinc-200/80 bg-white/95 shadow-slate-200/30",
               )}
             >
               <div className="flex flex-col gap-2">
@@ -150,7 +156,7 @@ export default function Navbar() {
                             : "text-zinc-900 bg-zinc-950/5 border border-zinc-950/10"
                           : theme === "dark"
                             ? "text-zinc-400 hover:text-white hover:bg-white/5"
-                            : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-950/5"
+                            : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-950/5",
                       )}
                     >
                       {item.name}
