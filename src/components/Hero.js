@@ -96,7 +96,7 @@ export default function Hero() {
                 Say Hello
               </Link>
               <a
-                href="/resume.pdf"
+                href="https://drive.google.com/file/d/1b3j6DEKZRIz9qoXtoiQ65MhQW9kO5ZLC/view?usp=sharing"
                 download
                 className="btn-secondary w-full sm:w-auto text-center px-8 py-3.5 rounded-full text-base font-semibold transition-all duration-300 hover:scale-105"
               >
