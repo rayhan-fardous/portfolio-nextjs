@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
 import Stack from "@/components/Stack";
+import Skills from "@/components/skills";
 
 export default function Home() {
   return (
@@ -11,9 +12,10 @@ export default function Home() {
 
       {/* Main Content: Hero Section */}
       <main className="grow">
-        <Hero />
+        <Hero/>
         <About/>
         <Stack/>
+        <Skills/>
       </main>
     </div>
   );

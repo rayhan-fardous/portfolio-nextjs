@@ -34,7 +34,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link
-            href="#home"
+            href="/"
             className="flex items-center space-x-1.5 text-xl font-bold tracking-wide"
           >
             <span className="text-emerald-400 font-extrabold">&lt;</span>
@@ -98,9 +98,9 @@ export default function Navbar() {
                   className="flex items-center justify-center"
                 >
                   {theme === "dark" ? (
-                    <Sun size={18} className="stroke-[2]" />
+                    <Sun size={18} className="stroke-2" />
                   ) : (
-                    <Moon size={18} className="stroke-[2]" />
+                    <Moon size={18} className="stroke-2" />
                   )}
                 </motion.div>
               </AnimatePresence>

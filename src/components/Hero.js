@@ -37,7 +37,7 @@ export default function Hero() {
       </div>
       {/* Background Radial Glowing Spheres */}
       <div className="absolute top-1/4 left-1/4 w-75 md:w-125 h-75 md:h-125 rounded-full glow-a blur-[80px] md:blur-[120px] pointer-events-none -translate-x-1/2 -translate-y-1/2 transition-all duration-500" />
-      <div className="absolute bottom-1/4 right-1/4 w-62.5 md:w-100 h-62.5 md:h-100 rounded-full glow-b blur-[80px] md:blur-[120px] pointer-events-none translate-x-1/2 translate-y-1/2 transition-all duration-500" />
+      <div className="absolute bottom-70 right-25 w-62.5 md:w-100 h-62.5 md:h-100 rounded-full glow-b blur-[80px] md:blur-[120px] pointer-events-none translate-x-1/2 translate-y-1/2 transition-all duration-500" />
 
       {/* Hero Grid Container */}
       <div className="w-full max-w-6xl px-6 md:px-8 mx-auto z-10">

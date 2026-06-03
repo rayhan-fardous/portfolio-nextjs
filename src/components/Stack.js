@@ -151,19 +151,21 @@ function TiltCard({ children }) {
       onMouseMove={handleMove}
       onMouseLeave={reset}
       className="
-        group
-        relative
-        overflow-hidden
-        rounded-3xl
-        border
-        border-white/10
-        bg-white/4
-        backdrop-blur-xl
-        p-6
-        transition-all
-        duration-300
-        hover:border-indigo-500/40
-        hover:shadow-[0_0_40px_rgba(99,102,241,0.18)]
+      group 
+      relative
+      overflow-hidden
+      rounded-3xl
+      border
+    border-zinc-200
+    dark:border-zinc-800
+    bg-white/80
+    dark:bg-zinc-900/40
+      backdrop-blur-xl
+      p-6
+      transition-all
+      duration-300
+    hover:border-indigo-500/40
+      hover:shadow-[0_0_40px_rgba(99,102,241,0.18)]
       "
       style={{
         transformStyle: "preserve-3d",
@@ -196,38 +198,61 @@ function TiltCard({ children }) {
 
 export default function Stack() {
   return (
-    <section
-      id="stack"
-      className="relative py-24 px-4 overflow-hidden"
-    >
-      {/* Background Glow */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-500/10 blur-[120px] rounded-full" />
+    <section id="stack" className="relative py-24 px-4 overflow-hidden">
+      {/* Modern Background Texture */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Grid */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: `
+        linear-gradient(var(--border-default) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-default) 1px, transparent 1px)
+      `,
+            backgroundSize: "40px 40px",
+          }}
+        />
 
-      <div className="absolute bottom-10 right-10 w-72 h-72 bg-purple-500/10 blur-[120px] rounded-full" />
+        {/* Dot Overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, var(--text-primary) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+      </div>
+      {/* Background Glow */}
+      <div className="absolute top-50 left-20 w-72 h-72 rounded-full blur-[120px] opacity-10 bg-indigo-500 pointer-events-none" />
+      <div className="absolute bottom-50 right-20 w-72 h-72 rounded-full blur-[120px] opacity-10 bg-pink-500 pointer-events-none" />
+      
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
 
         <div className="text-center mb-16">
-          <span className="uppercase tracking-[0.3em] text-indigo-400 text-sm">
+          <span className="uppercase tracking-[0.3em] text-indigo-500 dark:text-indigo-400 text-sm">
             My Tech Stack
           </span>
 
-          <h2 className="mt-4 text-4xl md:text-5xl font-bold text-white">
-            Technologies I Use
+          <h2 className="mt-4 text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white">
+            Technologies 
+            <span className="bg-linear-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+              {" "}
+              I Use
+            </span>
           </h2>
 
-          <p className="mt-5 text-gray-400 max-w-2xl mx-auto">
-            A collection of modern technologies, frameworks,
-            tools, and platforms I use to build fast,
-            scalable, and user-friendly web applications.
+          <p className="mt-5 text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+            A collection of modern technologies, frameworks, tools, and
+            platforms I use to build fast, scalable, and user-friendly web
+            applications.
           </p>
 
-          <div className="mt-8 inline-flex items-center gap-3 px-5 py-3 rounded-full border border-indigo-500/20 bg-indigo-500/10">
-            <span className="text-2xl font-bold text-indigo-400">
-              18+
-            </span>
-            <span className="text-gray-300">
+          <div className="mt-8 inline-flex items-center gap-3 px-5 py-3 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 backdrop-blur-xl">
+            <span className="text-2xl font-bold text-indigo-400">18+</span>
+            <span className="text-zinc-700 dark:text-zinc-300">
               Technologies Used
             </span>
           </div>
@@ -249,10 +274,7 @@ export default function Stack() {
           "
         >
           {techCategories.map((category) => (
-            <motion.div
-              key={category.title}
-              variants={item}
-            >
+            <motion.div key={category.title} variants={item}>
               <TiltCard>
                 {/* Title */}
 
@@ -261,7 +283,7 @@ export default function Stack() {
                     {category.icon}
                   </div>
 
-                  <h3 className="text-xl font-bold text-white">
+                  <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
                     {category.title}
                   </h3>
                 </div>
@@ -280,9 +302,11 @@ export default function Stack() {
                         px-3
                         py-2
                         rounded-xl
-                        bg-white/5
+                        bg-zinc-100
+                        dark:bg-zinc-800/50
                         border
-                        border-white/10
+                        border-zinc-200
+                        dark:border-zinc-700
                         hover:border-indigo-500/40
                         hover:bg-indigo-500/10
                         transition-all
@@ -294,9 +318,7 @@ export default function Stack() {
                         {tech.icon}
                       </span>
 
-                      <span className="text-sm text-gray-300">
-                        {tech.name}
-                      </span>
+                      <span className="text-sm text-zinc-700 dark:text-zinc-300">{tech.name}</span>
                     </div>
                   ))}
                 </div>

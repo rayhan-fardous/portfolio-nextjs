@@ -7,6 +7,7 @@ import {
   FaFileDownload,
   FaLaptopCode,
 } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 export default function About() {
   return (
@@ -40,38 +41,99 @@ export default function About() {
         />
       </div>
       {/* Background Glow */}
-      <div className="absolute top-20 left-20 w-72 h-72 rounded-full blur-[120px] opacity-10 bg-indigo-500 pointer-events-none" />
-      <div className="absolute bottom-20 right-20 w-72 h-72 rounded-full blur-[120px] opacity-10 bg-pink-500 pointer-events-none" />
+      <div className="absolute top-50 left-20 w-72 h-72 rounded-full blur-[120px] opacity-10 bg-indigo-500 pointer-events-none" />
+      <div className="absolute bottom-50 right-20 w-72 h-72 rounded-full blur-[120px] opacity-10 bg-pink-500 pointer-events-none" />
+      
 
       <div className="max-w-6xl mx-auto relative z-10">
+        <div
+          className="
+    absolute
+    left-1/2
+    top-20
+    -translate-x-1/2
+    h-96
+    w-96
+    rounded-full
+    bg-indigo-500/10
+    blur-[140px]
+    pointer-events-none
+  "
+        />
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2
-            className="text-4xl md:text-5xl font-bold"
+            className="
+    text-4xl
+    md:text-5xl
+    font-bold
+    tracking-tight
+  "
             style={{ color: "var(--text-primary)" }}
           >
-            About Me
+            About
+            <span className="bg-linear-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+              {" "}
+              Me
+            </span>
           </h2>
           <p className="mt-2 text-lg" style={{ color: "var(--text-muted)" }}>
             My Introduction
           </p>
         </div>
 
+<motion.div
+  initial={{ opacity: 0, y: 40 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }}
+  transition={{ duration: 0.7 }}
+>
         {/* Content */}
         <div className="grid lg:grid-cols-2 gap-14 items-center">
           {/* Left Side Image */}
           <div className="flex justify-center">
-            <div className="relative w-75 h-75 md:w-105 md:h-105">
+            <motion.div
+              className="group relative w-75 h-75 md:w-105 md:h-105"
+              whileHover={{
+                y: -10,
+                scale: 1.02,
+              }}
+              transition={{
+  type: "spring",
+  stiffness: 120,
+  damping: 18,
+}}
+            >
               <div
-                className="absolute inset-0 rounded-3xl blur-3xl opacity-20"
-                style={{
-                  background:
-                    "linear-gradient(135deg,var(--accent-indigo),var(--accent-rose))",
-                }}
+                className="
+    absolute
+    -inset-4
+    rounded-4xl
+    bg-linear-to-r
+    from-cyan-500/20
+    via-indigo-500/20
+    to-purple-500/20
+    blur-3xl
+    opacity-50
+    group-hover:opacity-80
+    transition-all
+    duration-700
+  "
               />
 
               <div
-                className="relative w-full h-full rounded-3xl overflow-hidden border"
+                className="
+    relative
+    w-full
+    h-full
+    rounded-3xl
+    overflow-hidden
+    border
+    transition-all
+    duration-500
+    group-hover:-translate-y-2
+    group-hover:shadow-[0_25px_80px_rgba(99,102,241,0.25)]
+  "
                 style={{
                   borderColor: "var(--border-default)",
                 }}
@@ -81,11 +143,17 @@ export default function About() {
                   alt="Rayhan Fardous"
                   fill
                   sizes="(max-width: 768px) 100vw, 40vw"
-                  className="object-contain"
+                  className="
+    object-contain
+    transition-transform
+    duration-700
+    ease-out
+    group-hover:scale-105
+  "
                   priority
                 />
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Right Side Content */}
@@ -109,35 +177,87 @@ export default function About() {
                   subtitle: "20+ Used",
                 },
               ].map((item, idx) => (
-                <div
+                <motion.div
                   key={idx}
-                  className="p-5 rounded-2xl backdrop-blur-md border text-center transition-all duration-300 hover:-translate-y-2"
+                  whileHover={{
+                    y: -8,
+                    scale: 1.03,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 250,
+                    damping: 18,
+                  }}
+                  className="
+    group
+    relative
+    overflow-hidden
+    p-5
+    rounded-2xl
+    backdrop-blur-xl
+    border
+    text-center
+  "
                   style={{
                     background: "rgba(255,255,255,0.03)",
                     borderColor: "var(--border-default)",
                   }}
                 >
                   <div
-                    className="text-xl mb-3 flex justify-center"
-                    style={{ color: "var(--accent-indigo)" }}
+                    className="
+    absolute
+    inset-0
+    opacity-0
+    group-hover:opacity-100
+    transition-all
+    duration-700
+  "
+                  >
+                    <div
+                      className="
+      absolute
+      inset-0
+      bg-linear-to-br
+      from-cyan-500/10
+      via-transparent
+      to-purple-500/10
+    "
+                    />
+                  </div>
+                  <div
+                    className="
+    mb-3
+    relative
+    z-10
+    flex
+    justify-center
+    text-2xl
+    transition-all
+    duration-500
+    group-hover:scale-110
+  "
+                    style={{
+                      color: "var(--accent-indigo)",
+                      filter: "drop-shadow(0 0 12px rgba(99,102,241,.5))",
+                    }}
                   >
                     {item.icon}
                   </div>
 
                   <h3
-                    className="font-semibold text-sm md:text-base"
+                    className="relative z-10 font-semibold text-sm md:text-base"
                     style={{ color: "var(--text-primary)" }}
                   >
                     {item.title}
                   </h3>
 
                   <p
-                    className="text-xs md:text-sm mt-1"
+                    className="relative z-10 text-xs md:text-sm mt-1"
                     style={{ color: "var(--text-muted)" }}
                   >
                     {item.subtitle}
                   </p>
-                </div>
+                </motion.div>
               ))}
             </div>
 
@@ -155,21 +275,48 @@ export default function About() {
             </p>
 
             {/* Resume Button */}
-            <a
+            <motion.a
+              whileHover={{
+                y: -3,
+                scale: 1.02,
+              }}
+              whileTap={{
+                scale: 0.98,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 250,
+                damping: 15,
+              }}
               href="https://drive.google.com/file/d/1b3j6DEKZRIz9qoXtoiQ65MhQW9kO5ZLC/view?usp=sharing"
               download
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105"
+              className="
+group
+inline-flex
+items-center
+gap-2
+px-6
+py-3
+rounded-xl
+font-medium
+shadow-lg
+hover:shadow-[0_15px_40px_rgba(99,102,241,.25)]
+transition-shadow
+duration-500
+"
               style={{
-                background: "rgba(255,255,255,0.05)",
+                background:
+                  "linear-gradient(135deg, rgba(99,102,241,.12), rgba(168,85,247,.12))",
                 color: "var(--text-primary)",
                 border: "1px solid var(--border-default)",
               }}
             >
               Download Resume
-              <FaFileDownload />
-            </a>
+              <FaFileDownload className="transition-transform duration-300 group-hover:translate-y-0.5" />
+            </motion.a>
           </div>
         </div>
+        </motion.div>
       </div>
     </section>
   );
