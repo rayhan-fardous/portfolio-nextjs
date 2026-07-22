@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Typewriter } from "react-simple-typewriter";
+import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
@@ -43,7 +44,25 @@ export default function Hero() {
       <div className="w-full max-w-6xl px-6 md:px-8 mx-auto z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column: Text & Content */}
-          <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 md:space-y-7 order-2 lg:order-1">
+          {/* <motion.div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 md:space-y-7 order-2 lg:order-1"> */}
+          <motion.div
+  initial={{ opacity: 0, x: -50 }}
+  animate={{ opacity: 1, x: 0 }}
+  transition={{
+    duration: 0.8,
+    ease: "easeOut",
+  }}
+  className="
+  lg:col-span-7
+  flex
+  flex-col
+  items-center
+  lg:items-start
+  text-center
+  lg:text-left
+  space-y-6
+"
+>
             <div className="space-y-2.5">
               <p
                 className="text-lg md:text-xl font-medium tracking-wide transition-colors duration-500"
@@ -52,9 +71,13 @@ export default function Hero() {
                 Hey, I&apos;m
               </p>
               <h1
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-none transition-colors duration-500"
-                style={{ color: "var(--text-primary)" }}
-              >
+  className="
+  text-5xl
+  md:text-7xl
+  font-bold
+  tracking-tight
+"
+>
                 Rayhan Fardous
               </h1>
           
@@ -79,7 +102,10 @@ export default function Hero() {
 
             {/* Description */}
             <p
-              className="max-w-xl text-base sm:text-lg leading-relaxed font-normal transition-colors duration-500"
+  className="
+  font-(--font-body)
+  text-lg
+  leading-relaxed transition-colors duration-500"
               style={{ color: "var(--text-muted)" }}
             >
               Crafting scalable, responsive, and user-centric web applications
@@ -161,7 +187,7 @@ export default function Hero() {
                 </svg>
               </a>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: Circular Rotating Profile Picture */}
           <div className="lg:col-span-5 flex justify-center order-1 lg:order-2">

@@ -218,3 +218,17 @@ body {
 /* Glow blobs */
 .glow-a { background: var(--glow-a); }
 .glow-b { background: var(--glow-b); }
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}

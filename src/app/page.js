@@ -3,6 +3,8 @@ import Hero from "@/components/Hero";
 import About from "@/components/About";
 import Stack from "@/components/Stack";
 import Skills from "@/components/skills";
+import Projects from "@/components/Projects";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -16,7 +18,9 @@ export default function Home() {
         <About/>
         <Stack/>
         <Skills/>
+        <Projects/>
       </main>
+      <Footer />
     </div>
   );
 }
