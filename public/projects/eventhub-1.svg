@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgEH" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c0a1d" />
+      <stop offset="50%" stop-color="#161233" />
+      <stop offset="100%" stop-color="#281a4d" />
+    </linearGradient>
+    <linearGradient id="orangeGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff8a65" />
+      <stop offset="100%" stop-color="#f43f5e" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="675" rx="24" fill="url(#bgEH)" />
+
+  <rect x="40" y="30" width="1120" height="60" rx="16" fill="#ffffff" fill-opacity="0.05" stroke="#ffffff" stroke-opacity="0.1" />
+  <circle cx="75" cy="60" r="8" fill="#ef4444" />
+  <circle cx="100" cy="60" r="8" fill="#eab308" />
+  <circle cx="125" cy="60" r="8" fill="#22c55e" />
+  <text x="160" y="65" fill="#ff8a65" font-family="system-ui, sans-serif" font-size="16" font-weight="700" letter-spacing="1">EVENTHUB — DISCOVERY &amp; REAL-TIME TICKET BOOKING</text>
+
+  <!-- Hero Event Banner -->
+  <rect x="40" y="110" width="1120" height="260" rx="20" fill="url(#orangeGlow)" opacity="0.85" />
+  <text x="80" y="180" fill="#ffffff" font-family="system-ui, sans-serif" font-size="34" font-weight="800">Tech Summit 2026</text>
+  <text x="80" y="215" fill="#ffe4e6" font-family="system-ui, sans-serif" font-size="16">Dhaka Convention Center • Aug 14-16 • 1,200 Attendees</text>
+
+  <rect x="80" y="250" width="180" height="45" rx="12" fill="#ffffff" />
+  <text x="115" y="278" fill="#e11d48" font-family="system-ui, sans-serif" font-size="15" font-weight="700">Reserve Ticket</text>
+
+  <!-- Event Grid -->
+  <rect x="40" y="395" width="350" height="240" rx="16" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.08" />
+  <text x="65" y="435" fill="#ffffff" font-family="system-ui, sans-serif" font-size="18" font-weight="700">Full-Stack Hackathon</text>
+  <text x="65" y="465" fill="#9ca3af" font-family="system-ui, sans-serif" font-size="13">Virtual Event • Free Entry</text>
+
+  <rect x="425" y="395" width="350" height="240" rx="16" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.08" />
+  <text x="450" y="435" fill="#ffffff" font-family="system-ui, sans-serif" font-size="18" font-weight="700">AI &amp; Web3 Conference</text>
+  <text x="450" y="465" fill="#9ca3af" font-family="system-ui, sans-serif" font-size="13">Gulshan Club • $49</text>
+
+  <rect x="810" y="395" width="350" height="240" rx="16" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.08" />
+  <text x="835" y="435" fill="#ffffff" font-family="system-ui, sans-serif" font-size="18" font-weight="700">UX Design Bootcamp</text>
+  <text x="835" y="465" fill="#9ca3af" font-family="system-ui, sans-serif" font-size="13">Online Workshop • $29</text>
+</svg>
