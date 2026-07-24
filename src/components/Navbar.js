@@ -1,182 +1,313 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTheme } from "@/components/ThemeProvider";
-import { Sun, Moon, Menu, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Sun, Moon, Menu, X, ArrowUpRight } from "lucide-react";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useMotionValueEvent,
+} from "framer-motion";
 import { clsx } from "clsx";
+
+const navItems = [
+  { name: "Home", href: "/#home", id: "home" },
+  { name: "About", href: "/#about", id: "about" },
+  { name: "Skills", href: "/#stack", id: "stack" },
+  { name: "Projects", href: "/#projects", id: "projects" },
+  { name: "Experience", href: "/#experience", id: "experience" },
+  { name: "Contact", href: "/#contact", id: "contact" },
+];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("Home");
+  const [activeSection, setActiveSection] = useState("home");
+  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const pathname = usePathname();
 
-  const navItems = [
-    { name: "About", href: "/#about" },
-    { name: "Tech Stack", href: "/#stack" },
-    { name: "Skills", href: "/#skills" },
-    { name: "Projects", href: "/#projects" },
-    { name: "Contact", href: "/#contact" },
-  ];
+  const { scrollY } = useScroll();
+
+  // Hide on scroll down, show on scroll up
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    if (latest > 120 && latest > previous + 5) {
+      setHidden(true);
+    } else {
+      setHidden(false);
+    }
+    setScrolled(latest > 20);
+  });
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  // ScrollSpy using IntersectionObserver
+  useEffect(() => {
+    if (pathname !== "/") return;
+
+    const sectionIds = ["home", "about", "skills", "projects", "stack", "contact"];
+    const observerOptions = {
+      root: null,
+      rootMargin: "-20% 0px -60% 0px",
+      threshold: 0,
+    };
+
+    const handleIntersect = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(handleIntersect, observerOptions);
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [pathname]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 py-6 md:px-6">
-      {/* Navbar Container */}
+    <motion.header
+      variants={{
+        visible: { y: 0 },
+        hidden: { y: "-100%" },
+      }}
+      animate={hidden ? "hidden" : "visible"}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-4 md:pt-5"
+    >
+      {/* Container */}
       <nav
         className={clsx(
-          "w-full max-w-6xl rounded-full border px-6 py-3 backdrop-blur-xl transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.15)]",
-          theme === "dark"
-            ? "border-white/10 bg-[#060814]/40 shadow-indigo-950/20"
-            : "border-zinc-200/80 bg-white/65 shadow-slate-200/40",
+          "w-full max-w-[1280px] h-[72px] rounded-2xl border px-5 sm:px-6 flex items-center justify-between transition-all duration-300",
+          scrolled
+            ? theme === "dark"
+              ? "bg-[#050505]/80 border-white/[0.08] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+              : "bg-white/80 border-zinc-200/80 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.06)]"
+            : theme === "dark"
+              ? "bg-[#050505]/40 border-white/[0.05] backdrop-blur-md"
+              : "bg-white/40 border-zinc-200/50 backdrop-blur-md",
         )}
       >
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 group"
+        {/* Brand / Logo */}
+        <Link
+          href="/#home"
+          onClick={() => setActiveSection("home")}
+          className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 rounded-lg p-1"
+          aria-label="RayHan Portfolio Home"
+        >
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative w-8 h-8 flex items-center justify-center"
           >
-            <div className="relative w-9 h-9 group-hover:scale-105 transition-transform duration-300">
-              <Image
-                src="/logo.png"
-                alt="RayHan Logo"
-                fill
-                sizes="36px"
-                className="object-contain"
-                priority
-              />
-            </div>
+            <Image
+              src="/logo.png"
+              alt="RayHan Logo"
+              width={32}
+              height={32}
+              className="object-contain filter drop-shadow-[0_0_8px_rgba(34,211,238,0.3)]"
+              priority
+            />
+          </motion.div>
+          
+          <div className="flex items-center gap-1">
             <span
               className={clsx(
-                "text-xl font-black tracking-wider transition-colors duration-300",
+                "text-lg font-bold tracking-tight transition-colors duration-300 font-sans",
                 theme === "dark" ? "text-white" : "text-zinc-900",
               )}
             >
-              RayHan.
+              RayHan
             </span>
-          </Link>
-
-          {/* Desktop Navigation Links */}
-          <div className="hidden lg:flex items-center gap-1.5">
-            {navItems.map((item) => {
-              const isActive = activeTab === item.name;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setActiveTab(item.name)}
-                  className={clsx(
-                    "relative px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-300",
-                    isActive
-                      ? theme === "dark"
-                        ? "text-white bg-white/5 border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-                        : "text-zinc-900 bg-zinc-950/5 border border-zinc-950/10 shadow-[0_0_15px_rgba(0,0,0,0.02)]"
-                      : theme === "dark"
-                        ? "text-zinc-400 hover:text-white"
-                        : "text-zinc-600 hover:text-zinc-900",
-                  )}
-                >
-                  {item.name}
-                </Link>
-              );
-            })}
+            <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] shadow-[0_0_8px_#22D3EE] animate-pulse" />
           </div>
+        </Link>
 
-          {/* Right Side Tools: Theme Toggler & Mobile Hamburger */}
-          <div className="flex items-center gap-3">
-            {/* Animated Theme Toggler */}
-            <button
-              onClick={toggleTheme}
-              className={clsx(
-                "relative flex items-center justify-center w-10 h-10 rounded-full border transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer",
-                theme === "dark"
-                  ? "border-white/10 bg-white/5 text-amber-400 hover:bg-white/10 hover:border-white/20"
-                  : "border-zinc-200 bg-zinc-100/80 text-indigo-600 hover:bg-zinc-200/80 hover:border-zinc-300",
-              )}
-              aria-label="Toggle Theme"
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={theme}
-                  initial={{ y: -8, opacity: 0, rotate: -90 }}
-                  animate={{ y: 0, opacity: 1, rotate: 0 }}
-                  exit={{ y: 8, opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.2, ease: "easeInOut" }}
-                  className="flex items-center justify-center"
-                >
-                  {theme === "dark" ? (
-                    <Sun size={18} className="stroke-2" />
-                  ) : (
-                    <Moon size={18} className="stroke-2" />
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            </button>
-
-            {/* Mobile Menu Toggle Button */}
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className={clsx(
-                "flex lg:hidden items-center justify-center p-2 rounded-full border transition-all hover:scale-105 cursor-pointer",
-                theme === "dark"
-                  ? "border-white/10 bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10"
-                  : "border-zinc-200 bg-zinc-100/80 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/80",
-              )}
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          </div>
+        {/* Desktop Navigation Links */}
+        <div className="hidden md:flex items-center gap-1 bg-white/[0.03] dark:bg-white/[0.03] p-1.5 rounded-full border border-white/[0.05]">
+          {navItems.map((item) => {
+            const isActive = activeSection === item.id;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                onClick={() => setActiveSection(item.id)}
+                className={clsx(
+                  "relative px-4 py-1.5 text-xs sm:text-sm font-medium rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50",
+                  isActive
+                    ? theme === "dark"
+                      ? "text-cyan-300"
+                      : "text-cyan-600"
+                    : theme === "dark"
+                      ? "text-zinc-400 hover:text-white"
+                      : "text-zinc-600 hover:text-zinc-900",
+                )}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="navbar-active-pill"
+                    className={clsx(
+                      "absolute inset-0 rounded-full border shadow-sm",
+                      theme === "dark"
+                        ? "bg-cyan-500/10 border-cyan-500/30 shadow-[0_0_12px_rgba(34,211,238,0.15)]"
+                        : "bg-cyan-500/10 border-cyan-500/30",
+                    )}
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{item.name}</span>
+              </Link>
+            );
+          })}
         </div>
 
-        {/* Mobile Dropdown Menu */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className={clsx(
-                "lg:hidden mt-4 rounded-3xl border p-4 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.25)]",
-                theme === "dark"
-                  ? "border-white/5 bg-[#030014]/90 shadow-indigo-950/20"
-                  : "border-zinc-200/80 bg-white/95 shadow-slate-200/30",
-              )}
-            >
-              <div className="flex flex-col gap-2">
-                {navItems.map((item) => {
-                  const isActive = activeTab === item.name;
-                  return (
+        {/* Right Tools: CTA, Theme Toggle & Mobile Hamburger */}
+        <div className="flex items-center gap-3">
+          {/* CTA Link */}
+          <Link
+            href="/#contact"
+            className={clsx(
+              "hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full border transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50",
+              theme === "dark"
+                ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400/50 hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+                : "bg-cyan-500/10 border-cyan-500/30 text-cyan-700 hover:bg-cyan-500/20",
+            )}
+          >
+            Let&apos;s Talk
+            <ArrowUpRight size={14} />
+          </Link>
+
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className={clsx(
+              "relative flex items-center justify-center w-9 h-9 rounded-full border transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50",
+              theme === "dark"
+                ? "border-white/10 bg-white/5 text-amber-400 hover:bg-white/10 hover:border-white/20"
+                : "border-zinc-200 bg-zinc-100 text-cyan-600 hover:bg-zinc-200 hover:border-zinc-300",
+            )}
+            aria-label="Toggle Dark/Light Theme"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={theme}
+                initial={{ y: -6, opacity: 0, rotate: -90 }}
+                animate={{ y: 0, opacity: 1, rotate: 0 }}
+                exit={{ y: 6, opacity: 0, rotate: 90 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center justify-center"
+              >
+                {theme === "dark" ? (
+                  <Sun size={17} className="stroke-[2.2]" />
+                ) : (
+                  <Moon size={17} className="stroke-[2.2]" />
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </button>
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={clsx(
+              "flex md:hidden items-center justify-center w-9 h-9 rounded-full border transition-all hover:scale-105 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50",
+              theme === "dark"
+                ? "border-white/10 bg-white/5 text-zinc-300 hover:text-white"
+                : "border-zinc-200 bg-zinc-100 text-zinc-700 hover:text-zinc-900",
+            )}
+            aria-label="Toggle navigation menu"
+            aria-expanded={isOpen}
+          >
+            {isOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile Drawer Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -15, scale: 0.98 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className={clsx(
+              "fixed inset-x-4 top-[84px] md:hidden rounded-2xl border p-6 backdrop-blur-2xl shadow-2xl z-50 overflow-hidden",
+              theme === "dark"
+                ? "border-white/10 bg-[#050505]/95 shadow-cyan-950/20"
+                : "border-zinc-200 bg-white/95 shadow-zinc-300/40",
+            )}
+          >
+            <div className="flex flex-col gap-2">
+              {navItems.map((item, idx) => {
+                const isActive = activeSection === item.id;
+                return (
+                  <motion.div
+                    key={item.name}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.04 + 0.05 }}
+                  >
                     <Link
-                      key={item.name}
                       href={item.href}
                       onClick={() => {
-                        setActiveTab(item.name);
+                        setActiveSection(item.id);
                         setIsOpen(false);
                       }}
                       className={clsx(
-                        "px-4 py-2.5 text-base font-medium rounded-2xl transition-all duration-200",
+                        "flex items-center justify-between px-4 py-3 text-base font-medium rounded-xl transition-all duration-200",
                         isActive
                           ? theme === "dark"
-                            ? "text-white bg-indigo-500/10 border border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.1)]"
-                            : "text-zinc-900 bg-zinc-950/5 border border-zinc-950/10"
+                            ? "text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 font-semibold"
+                            : "text-cyan-700 bg-cyan-500/10 border border-cyan-500/20 font-semibold"
                           : theme === "dark"
                             ? "text-zinc-400 hover:text-white hover:bg-white/5"
-                            : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-950/5",
+                            : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100",
                       )}
                     >
                       {item.name}
+                      {isActive && (
+                        <span className="w-2 h-2 rounded-full bg-[#22D3EE] shadow-[0_0_8px_#22D3EE]" />
+                      )}
                     </Link>
-                  );
-                })}
+                  </motion.div>
+                );
+              })}
+
+              <div className="pt-4 mt-2 border-t border-white/[0.08]">
+                <Link
+                  href="/#contact"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold text-sm shadow-lg shadow-cyan-500/20 active:scale-98 transition-transform"
+                >
+                  Let&apos;s Talk
+                  <ArrowUpRight size={16} />
+                </Link>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
-    </header>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 }
