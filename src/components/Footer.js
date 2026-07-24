@@ -5,9 +5,9 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 const navigation = [
   { label: "About", href: "#about" },
-  { label: "Tech Stack", href: "#stack" },
   { label: "Skills", href: "#skills" },
   { label: "Projects", href: "#projects" },
+  { label: "Experience", href: "#experience" },
 ];
 
 const socialLinks = [

@@ -1,9 +1,9 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
-import Stack from "@/components/Stack";
-import Skills from "@/components/skills";
+import Skills from "@/components/Skills";
 import Projects from "@/components/Projects";
+import Experience from "@/components/Experience";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
@@ -13,15 +13,16 @@ export default function Home() {
       {/* Premium Glassmorphic Navbar */}
       <Navbar />
 
-      {/* Main Content: Hero Section */}
+      {/* Main Content Sections */}
       <main className="grow">
-        <Hero/>
-        <About/>
-        <Stack/>
-        <Skills/>
-        <Projects/>
-        <Contact/>
+        <Hero />
+        <About />
+        <Skills />
+        <Experience />
+        <Projects />
+        <Contact />
       </main>
+
       <Footer />
     </div>
   );
