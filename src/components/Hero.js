@@ -32,10 +32,10 @@ const socialLinks = [
   { label: "GitHub",    href: "https://github.com/rayhan-fardous",           icon: FaGithub },
   { label: "LinkedIn",  href: "https://www.linkedin.com/in/rayhanfardous/",  icon: FaLinkedin },
   { label: "Email",     href: "mailto:rayhan.fardous55@gmail.com",            icon: Mail },
-  { label: "WhatsApp",  href: "https://wa.me/+8801234567890",                 icon: MessageCircle },
+  { label: "WhatsApp",  href: "https://wa.me/+8801785473355",                 icon: MessageCircle },
 ];
 
-const words = ["Full Stack Developer", "MERN Stack Engineer", "Next.js Specialist", "UI/UX Enthusiast"];
+const words = ["Full Stack Developer", "MERN Stack Engineer", "Next.js Specialist"];
 
 /* ─── Mouse Parallax Hook ─────────────────────────────── */
 function useMouseParallax(strength = 0.012) {

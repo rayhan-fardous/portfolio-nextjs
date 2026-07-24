@@ -60,7 +60,7 @@ export default function Navbar() {
   useEffect(() => {
     if (pathname !== "/") return;
 
-    const sectionIds = ["home", "about", "skills", "projects", "stack", "contact"];
+    const sectionIds = ["home", "about", "skills", "projects", "experience", "contact"];
     const observerOptions = {
       root: null,
       rootMargin: "-20% 0px -60% 0px",
