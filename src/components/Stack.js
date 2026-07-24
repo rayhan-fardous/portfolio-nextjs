@@ -198,7 +198,7 @@ function TiltCard({ children }) {
 
 export default function Stack() {
   return (
-    <section id="stack" className="relative py-24 px-4 overflow-hidden">
+    <section id="stack" className="relative py-24 px-6 overflow-hidden">
       {/* Modern Background Texture */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Grid */}
@@ -228,7 +228,7 @@ export default function Stack() {
       <div className="absolute bottom-50 right-20 w-72 h-72 rounded-full blur-[120px] opacity-10 bg-pink-500 pointer-events-none" />
       
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
 
         <div className="text-center mb-16">

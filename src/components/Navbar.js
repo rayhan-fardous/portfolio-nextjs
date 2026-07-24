@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "@/components/ThemeProvider";
 import { Sun, Moon, Menu, X } from "lucide-react";
@@ -16,7 +17,7 @@ export default function Navbar() {
     { name: "About", href: "/#about" },
     { name: "Tech Stack", href: "/#stack" },
     { name: "Skills", href: "/#skills" },
-    { name: "Projects", href: "/projects" },
+    { name: "Projects", href: "/#projects" },
     { name: "Contact", href: "/#contact" },
   ];
 
@@ -35,18 +36,26 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center space-x-1.5 text-xl font-bold tracking-wide"
+            className="flex items-center gap-2.5 group"
           >
-            <span className="text-emerald-400 font-extrabold">&lt;</span>
+            <div className="relative w-9 h-9 group-hover:scale-105 transition-transform duration-300">
+              <Image
+                src="/logo.png"
+                alt="RayHan Logo"
+                fill
+                sizes="36px"
+                className="object-contain"
+                priority
+              />
+            </div>
             <span
               className={clsx(
-                "font-black tracking-wider transition-colors duration-300",
+                "text-xl font-black tracking-wider transition-colors duration-300",
                 theme === "dark" ? "text-white" : "text-zinc-900",
               )}
             >
-              RAYHAN
+              RayHan.
             </span>
-            <span className="text-rose-500 font-extrabold">/&gt;</span>
           </Link>
 
           {/* Desktop Navigation Links */}

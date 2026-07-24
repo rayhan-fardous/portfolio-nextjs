@@ -17,7 +17,7 @@ export default function Projects() {
   };
 
   return (
-    <section id="projects" className="relative overflow-hidden px-5 py-24 sm:px-8 lg:py-32">
+    <section id="projects" className="relative overflow-hidden px-6 py-24 sm:px-8 lg:py-32">
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/10 blur-3xl" />
       
       <div className="relative mx-auto max-w-6xl">

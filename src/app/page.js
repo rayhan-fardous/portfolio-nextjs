@@ -4,6 +4,7 @@ import About from "@/components/About";
 import Stack from "@/components/Stack";
 import Skills from "@/components/skills";
 import Projects from "@/components/Projects";
+import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -19,6 +20,7 @@ export default function Home() {
         <Stack/>
         <Skills/>
         <Projects/>
+        <Contact/>
       </main>
       <Footer />
     </div>
