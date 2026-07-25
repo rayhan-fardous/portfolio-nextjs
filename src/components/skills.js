@@ -178,31 +178,6 @@ export default function Stack() {
       : skillCategories.filter((cat) => cat.id === activeTab);
 
   /* ── Level Badge Styles ───────────────────────────── */
-  const getLevelStyle = (level) => {
-    switch (level) {
-      case "Advanced":
-        return {
-          bg: dark ? "rgba(6, 182, 212, 0.12)" : "rgba(6, 182, 212, 0.10)",
-          border: dark ? "rgba(6, 182, 212, 0.25)" : "rgba(6, 182, 212, 0.30)",
-          text: dark ? "#67E8F9" : "#0891B2",
-        };
-      case "Intermediate":
-        return {
-          bg: dark ? "rgba(99, 102, 241, 0.12)" : "rgba(99, 102, 241, 0.10)",
-          border: dark ? "rgba(99, 102, 241, 0.25)" : "rgba(99, 102, 241, 0.30)",
-          text: dark ? "#818CF8" : "#4F46E5",
-        };
-      case "Learning":
-        return {
-          bg: dark ? "rgba(16, 185, 129, 0.12)" : "rgba(16, 185, 129, 0.10)",
-          border: dark ? "rgba(16, 185, 129, 0.25)" : "rgba(16, 185, 129, 0.30)",
-          text: dark ? "#34D399" : "#059669",
-        };
-      default:
-        return { bg: t.badgeBg, border: t.badgeBorder, text: t.badgeText };
-    }
-  };
-
   return (
     <section
       id="skills"
@@ -342,7 +317,7 @@ export default function Stack() {
             animate="visible"
             exit={{ opacity: 0, y: 15 }}
             variants={staggerContainer}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="flex flex-wrap justify-center gap-5 sm:gap-6 lg:gap-8"
           >
             {filteredCategories.map((category, catIdx) => {
               const CategoryIcon = category.icon;
@@ -351,7 +326,7 @@ export default function Stack() {
                   key={category.id}
                   variants={fadeUp}
                   custom={catIdx * 0.08}
-                  className="p-7 rounded-3xl border backdrop-blur-xl transition-all duration-500 relative group flex flex-col justify-between"
+                  className="w-full sm:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-4rem)/3)] p-5 sm:p-7 rounded-3xl border backdrop-blur-xl transition-all duration-500 relative group flex flex-col justify-between"
                   style={{
                     background: t.cardBg,
                     borderColor: t.cardBorder,
@@ -399,55 +374,45 @@ export default function Stack() {
                     </p>
 
                     {/* Skill Cards Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {category.skills.map((skill, skillIdx) => {
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-2.5">
+                      {category.skills.map((skill) => {
                         const IconComponent = skill.icon;
-                        const levelStyle = getLevelStyle(skill.level);
                         const iconColor =
                           dark && skill.darkColor ? skill.darkColor : skill.color;
 
                         return (
                           <motion.div
                             key={skill.name}
-                            whileHover={{ y: -3, scale: 1.02 }}
+                            whileHover={{ y: -2, scale: 1.01 }}
                             transition={{ duration: 0.2 }}
-                            className="p-3 rounded-xl border backdrop-blur-sm flex items-center justify-between gap-2 transition-all duration-300 group/skill"
+                            className="p-1.5 sm:p-2 rounded-xl border backdrop-blur-sm flex items-center gap-3 transition-all duration-300 group/skill"
                             style={{
                               background: t.techCardBg,
                               borderColor: t.techCardBorder,
                             }}
                           >
-                            <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="flex min-w-0 items-center gap-3">
                               <div
-                                className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover/skill:scale-110"
+                                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover/skill:scale-110"
                                 style={{
                                   background: dark
                                     ? "rgba(255,255,255,0.05)"
                                     : "rgba(12,14,31,0.04)",
                                 }}
                               >
-                                <IconComponent size={18} style={{ color: iconColor }} />
+                                <IconComponent size={21} style={{ color: iconColor }} />
                               </div>
 
-                              <span
-                                className="text-xs font-semibold truncate transition-colors duration-500"
-                                style={{ color: t.heading }}
-                              >
-                                {skill.name}
-                              </span>
+                              <div className="min-w-0">
+                                <span
+                                  className="text-sm font-semibold leading-tight truncate transition-colors duration-500"
+                                  style={{ color: t.heading }}
+                                  title={skill.name}
+                                >
+                                  {skill.name}
+                                </span>
+                              </div>
                             </div>
-
-                            {/* Proficiency Level Badge */}
-                            <span
-                              className="text-[10px] font-medium px-2 py-0.5 rounded-full border flex-shrink-0"
-                              style={{
-                                background: levelStyle.bg,
-                                borderColor: levelStyle.border,
-                                color: levelStyle.text,
-                              }}
-                            >
-                              {skill.level}
-                            </span>
                           </motion.div>
                         );
                       })}

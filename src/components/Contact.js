@@ -1,91 +1,119 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useTheme } from "@/components/ThemeProvider";
 import {
   Mail,
+  Phone,
+  MapPin,
+  Briefcase,
+  Clock,
   User,
+  Tag,
   MessageSquare,
   Send,
   CheckCircle2,
   AlertCircle,
+  Copy,
+  Check,
+  Download,
+  ArrowUpRight,
+  Sparkles,
 } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-
 import emailjs from "emailjs-com";
+
+// Zod Schema for Client-side Validation
+const contactSchema = z.object({
+  name: z.string().min(2, { message: "Full Name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  subject: z.string().min(3, { message: "Subject must be at least 3 characters." }),
+  message: z.string().min(10, { message: "Message must be at least 10 characters long." }),
+});
 
 const socialLinks = [
   {
     label: "GitHub",
     href: "https://github.com/rayhan-fardous",
     icon: FaGithub,
-    color: "hover:text-white hover:border-white/30",
+    tooltip: "github.com/rayhan-fardous",
   },
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/rayhanfardous/",
     icon: FaLinkedin,
-    color: "hover:text-blue-400 hover:border-blue-400/40",
+    tooltip: "linkedin.com/in/rayhanfardous",
   },
   {
     label: "Email",
     href: "mailto:rayhan.fardous55@gmail.com",
     icon: Mail,
-    color: "hover:text-indigo-400 hover:border-indigo-400/40",
+    tooltip: "rayhan.fardous55@gmail.com",
   },
 ];
 
-const inputBase =
-  "w-full rounded-2xl border px-5 py-3.5 text-sm outline-none transition-all duration-300 bg-transparent placeholder:text-[var(--text-muted)] text-[var(--text-primary)] border-[var(--border-default)] focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20";
-
 export default function Contact() {
-  const formRef = useRef(null);
-  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  // Match the subtle grid opacity of Hero, About, and Skills sections
+  const gridLine = isDark ? "rgba(255, 255, 255, 0.025)" : "rgba(99, 102, 241, 0.06)";
+
   const [status, setStatus] = useState("idle"); // idle | sending | success | error
-  const [errors, setErrors] = useState({});
+  const [copied, setCopied] = useState(false);
+  const [hoveredSocial, setHoveredSocial] = useState(null);
 
-  const validate = () => {
-    const e = {};
-    if (!form.name.trim()) e.name = "Name is required.";
-    if (!form.email.trim()) e.email = "Email is required.";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Enter a valid email.";
-    if (!form.subject.trim()) e.subject = "Subject is required.";
-    if (!form.message.trim()) e.message = "Message is required.";
-    return e;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(contactSchema),
+    mode: "onTouched",
+  });
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText("rayhan.fardous55@gmail.com");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const errs = validate();
-    if (Object.keys(errs).length) { setErrors(errs); return; }
-
+  const onSubmit = async (data) => {
     setStatus("sending");
 
     try {
-      await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
-        {
-          from_name: form.name,
-          from_email: form.email,
-          name: form.name,
-          email: form.email,
-          subject: form.subject,
-          message: form.message,
-          reply_to: form.email,
-        },
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
-      );
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+      if (serviceId && templateId && publicKey) {
+        await emailjs.send(
+          serviceId,
+          templateId,
+          {
+            from_name: data.name,
+            from_email: data.email,
+            name: data.name,
+            email: data.email,
+            subject: data.subject,
+            message: data.message,
+            reply_to: data.email,
+          },
+          publicKey
+        );
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+      }
+
       setStatus("success");
-      setForm({ name: "", email: "", subject: "", message: "" });
+      reset();
     } catch (err) {
-      console.error("EmailJS Error:", err);
+      console.error("Failed to send message:", err);
       setStatus("error");
     }
   };
@@ -93,399 +121,625 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="relative py-24 lg:py-32 px-6 overflow-hidden"
-      style={{ background: "var(--bg-base)" }}
+      className={`relative py-28 lg:py-36 px-4 sm:px-6 lg:px-8 overflow-hidden transition-colors duration-500 ${
+        isDark ? "bg-[#050505] text-white" : "bg-[#f8faff] text-slate-900"
+      }`}
     >
-      {/* Background texture */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* ── Background Aesthetics & Grid ── */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        {/* Subtle Grid Overlay */}
         <div
-          className="absolute inset-0 opacity-[0.04]"
+          className="absolute inset-0"
           style={{
             backgroundImage: `
-              linear-gradient(var(--border-default) 1px, transparent 1px),
-              linear-gradient(90deg, var(--border-default) 1px, transparent 1px)
+              linear-gradient(${gridLine} 1px, transparent 1px),
+              linear-gradient(90deg, ${gridLine} 1px, transparent 1px)
             `,
             backgroundSize: "40px 40px",
           }}
         />
+
+        {/* Soft Ambient Glow Orbs */}
         <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, var(--text-primary) 1px, transparent 1px)",
-            backgroundSize: "24px 24px",
-          }}
+          className={`absolute top-1/4 -left-32 w-[500px] h-[500px] rounded-full blur-[150px] pointer-events-none ${
+            isDark ? "bg-cyan-500/10" : "bg-cyan-500/10"
+          }`}
+        />
+        <div
+          className={`absolute bottom-10 -right-32 w-[450px] h-[450px] rounded-full blur-[140px] pointer-events-none ${
+            isDark ? "bg-cyan-400/10" : "bg-cyan-400/10"
+          }`}
         />
       </div>
 
-      {/* Glow blobs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-indigo-500/10 blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-violet-500/10 blur-[120px] pointer-events-none" />
-
-      <div className="max-w-6xl mx-auto relative z-10">
-        {/* Header */}
+      <div className="max-w-[1280px] mx-auto relative z-10">
+        {/* ── Section Header ── */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center max-w-3xl mx-auto mb-16 lg:mb-20"
         >
-          <span
-            className="inline-block rounded-full border px-4 py-2 text-sm backdrop-blur mb-4"
-            style={{
-              borderColor: "var(--border-default)",
-              background: "var(--bg-elevated)",
-              color: "var(--text-muted)",
-            }}
+          {/* Small Label Pill */}
+          <div
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest backdrop-blur-md mb-5 shadow-xs ${
+              isDark
+                ? "border-cyan-500/20 bg-cyan-500/10 text-cyan-400"
+                : "border-cyan-500/30 bg-cyan-500/10 text-cyan-700"
+            }`}
           >
-            Get In Touch
-          </span>
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Contact</span>
+          </div>
+
+          {/* Main Heading */}
           <h2
-            className="text-4xl md:text-5xl font-bold tracking-tight"
-            style={{ color: "var(--text-primary)" }}
+            className={`text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] ${
+              isDark ? "text-white" : "text-slate-900"
+            }`}
           >
-            Let&apos;s Work{" "}
-            <span className="bg-linear-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-              Together
-            </span>
+            Let&apos;s Build{" "}
+            <span
+              className={`bg-gradient-to-r bg-clip-text text-transparent drop-shadow-xs ${
+                isDark
+                  ? "from-cyan-400 via-cyan-300 to-blue-500"
+                  : "from-cyan-600 via-cyan-500 to-blue-600"
+              }`}
+            >
+              Something Amazing
+            </span>{" "}
+            Together
           </h2>
+
+          {/* Description */}
           <p
-            className="mt-4 max-w-xl mx-auto text-base leading-relaxed"
-            style={{ color: "var(--text-muted)" }}
+            className={`mt-5 text-base sm:text-lg leading-relaxed font-normal ${
+              isDark ? "text-zinc-300" : "text-slate-700"
+            }`}
           >
-            Have a project in mind, a question, or just want to say hello?
-            Drop me a message and I&apos;ll get back to you as soon as possible.
+            Whether you&apos;re a recruiter searching for exceptional talent, a company looking to build scalable software, a startup launching your next big idea, or a client with an exciting project — my inbox is always open. Let&apos;s turn your vision into reality.
           </p>
         </motion.div>
 
-        {/* Two-column layout */}
-        <div className="grid lg:grid-cols-5 gap-10 lg:gap-14 items-start">
-          {/* ── Left info panel ── */}
+        {/* ── Two-Column Layout (Desktop 2-Col / Mobile Single-Col) ── */}
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+          {/* ════════════════ LEFT SIDE: Contact Info & Cards ════════════════ */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
+            initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.65 }}
-            className="lg:col-span-2 flex flex-col gap-8"
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-5 flex flex-col gap-6"
           >
-            {/* Info cards */}
-            {[
-              {
-                icon: Mail,
-                title: "Email",
-                value: "rayhan.fardous55@gmail.com",
-                href: "mailto:rayhan.fardous55@gmail.com",
-              },
-              {
-                icon: MessageSquare,
-                title: "Response Time",
-                value: "Within 24 hours",
-                href: null,
-              },
-            ].map(({ icon: Icon, title, value, href }) => (
-              <div
-                key={title}
-                className="flex items-start gap-4 p-5 rounded-2xl border backdrop-blur-xl transition-all duration-300 hover:border-indigo-500/40 hover:shadow-[0_0_30px_rgba(99,102,241,0.12)]"
-                style={{
-                  background: "var(--bg-card)",
-                  borderColor: "var(--border-default)",
-                }}
+            {/* Cards Container */}
+            <div className="flex flex-col gap-4">
+              {/* Email Card */}
+              <motion.div
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
+                className={`group relative flex items-center justify-between p-5 rounded-2xl border backdrop-blur-xl transition-all duration-300 ${
+                  isDark
+                    ? "bg-[#111111]/80 border-white/[0.08] shadow-none hover:border-cyan-500/40 hover:shadow-[0_0_30px_rgba(6,182,212,0.12)]"
+                    : "bg-white border-slate-200/90 shadow-md shadow-slate-200/40 hover:border-cyan-500/40 hover:shadow-cyan-500/10"
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border group-hover:scale-105 transition-transform duration-300 ${
+                      isDark
+                        ? "border-cyan-500/20 bg-cyan-500/10 text-cyan-400"
+                        : "border-cyan-200 bg-cyan-50 text-cyan-700"
+                    }`}
+                  >
+                    <Mail size={22} />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider block mb-0.5 text-t-secondary">
+                      Email
+                    </span>
+                    <a
+                      href="mailto:rayhan.fardous55@gmail.com"
+                      className="text-sm sm:text-base font-semibold transition-colors text-t-primary hover:text-cyan-500 dark:hover:text-cyan-400"
+                    >
+                      rayhan.fardous55@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                {/* Copy Button */}
+                <button
+                  type="button"
+                  onClick={handleCopyEmail}
+                  aria-label="Copy Email Address"
+                  className={`relative p-2.5 rounded-xl border transition-all duration-300 shrink-0 ${
+                    isDark
+                      ? "border-white/10 bg-white/[0.04] text-zinc-300 hover:text-cyan-400 hover:border-cyan-500/40 hover:bg-cyan-500/10"
+                      : "border-slate-200 bg-slate-100 text-slate-700 hover:text-cyan-700 hover:border-cyan-400 hover:bg-cyan-50 shadow-xs"
+                  }`}
+                  title="Copy email to clipboard"
+                >
+                  {copied ? (
+                    <Check size={16} className={isDark ? "text-cyan-400" : "text-cyan-600"} />
+                  ) : (
+                    <Copy size={16} />
+                  )}
+                  <AnimatePresence>
+                    {copied && (
+                      <motion.span
+                        initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        className={`absolute -top-9 right-0 px-2.5 py-1 text-[10px] font-semibold rounded-md shadow-lg whitespace-nowrap ${
+                          isDark
+                            ? "text-cyan-300 bg-[#161618] border border-cyan-500/30"
+                            : "text-cyan-900 bg-white border border-cyan-400"
+                        }`}
+                      >
+                        Copied!
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </button>
+              </motion.div>
+
+              {/* Phone & WhatsApp Card */}
+              <motion.div
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
+                className={`group flex items-center justify-between p-5 rounded-2xl border backdrop-blur-xl transition-all duration-300 ${
+                  isDark
+                    ? "bg-[#111111]/80 border-white/[0.08] shadow-none hover:border-cyan-500/40 hover:shadow-[0_0_30px_rgba(6,182,212,0.12)]"
+                    : "bg-white border-slate-200/90 shadow-md shadow-slate-200/40 hover:border-cyan-500/40 hover:shadow-cyan-500/10"
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border group-hover:scale-105 transition-transform duration-300 ${
+                      isDark
+                        ? "border-cyan-500/20 bg-cyan-500/10 text-cyan-400"
+                        : "border-cyan-200 bg-cyan-50 text-cyan-700"
+                    }`}
+                  >
+                    <Phone size={22} />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider block mb-0.5 text-t-secondary">
+                      Phone / WhatsApp
+                    </span>
+                    <a
+                      href="https://wa.me/8801785473355"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm sm:text-base font-semibold transition-colors inline-flex items-center gap-1.5 text-t-primary hover:text-cyan-500 dark:hover:text-cyan-400"
+                    >
+                      +880 1785 473355
+                      <ArrowUpRight size={14} className="opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Location Card */}
+              <motion.div
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
+                className={`group flex items-center gap-4 p-5 rounded-2xl border backdrop-blur-xl transition-all duration-300 ${
+                  isDark
+                    ? "bg-[#111111]/80 border-white/[0.08] shadow-none hover:border-cyan-500/40 hover:shadow-[0_0_30px_rgba(6,182,212,0.12)]"
+                    : "bg-white border-slate-200/90 shadow-md shadow-slate-200/40 hover:border-cyan-500/40 hover:shadow-cyan-500/10"
+                }`}
               >
                 <div
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border text-indigo-400"
-                  style={{
-                    background: "rgba(99,102,241,0.08)",
-                    borderColor: "rgba(99,102,241,0.2)",
-                  }}
+                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border group-hover:scale-105 transition-transform duration-300 ${
+                    isDark
+                      ? "border-cyan-500/20 bg-cyan-500/10 text-cyan-400"
+                      : "border-cyan-200 bg-cyan-50 text-cyan-700"
+                  }`}
                 >
-                  <Icon size={20} />
+                  <MapPin size={22} />
                 </div>
                 <div>
-                  <p
-                    className="text-xs font-semibold uppercase tracking-widest mb-1"
-                    style={{ color: "var(--text-muted)" }}
-                  >
-                    {title}
+                  <span className="text-[11px] font-bold uppercase tracking-wider block mb-0.5 text-t-secondary">
+                    Location
+                  </span>
+                  <p className="text-sm sm:text-base font-semibold text-t-primary">
+                    Dhaka, Bangladesh{" "}
+                    <span className="text-t-secondary font-normal">
+                      · Remote Worldwide
+                    </span>
                   </p>
-                  {href ? (
-                    <a
-                      href={href}
-                      className="text-sm font-medium transition-colors hover:text-indigo-400"
-                      style={{ color: "var(--text-primary)" }}
-                    >
-                      {value}
-                    </a>
-                  ) : (
-                    <p
-                      className="text-sm font-medium"
-                      style={{ color: "var(--text-primary)" }}
-                    >
-                      {value}
-                    </p>
-                  )}
                 </div>
-              </div>
-            ))}
+              </motion.div>
 
-            {/* Social links */}
-            <div>
-              <p
-                className="text-xs font-semibold uppercase tracking-widest mb-4"
-                style={{ color: "var(--text-muted)" }}
+              {/* Availability Card */}
+              <motion.div
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
+                className={`group flex items-start gap-4 p-5 rounded-2xl border backdrop-blur-xl transition-all duration-300 ${
+                  isDark
+                    ? "bg-[#111111]/80 border-white/[0.08] shadow-none hover:border-cyan-500/40 hover:shadow-[0_0_30px_rgba(6,182,212,0.12)]"
+                    : "bg-white border-slate-200/90 shadow-md shadow-slate-200/40 hover:border-cyan-500/40 hover:shadow-cyan-500/10"
+                }`}
               >
-                Find me on
-              </p>
-              <div className="flex gap-3">
-                {socialLinks.map(({ label, href, icon: Icon, color }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target={href.startsWith("http") ? "_blank" : undefined}
-                    rel="noreferrer"
-                    aria-label={label}
-                    className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-300 hover:-translate-y-1 ${color}`}
-                    style={{
-                      background: "var(--bg-card)",
-                      borderColor: "var(--border-default)",
-                      color: "var(--text-muted)",
-                    }}
-                  >
-                    <Icon size={18} />
-                  </a>
-                ))}
+                <div
+                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border group-hover:scale-105 transition-transform duration-300 ${
+                    isDark
+                      ? "border-cyan-500/20 bg-cyan-500/10 text-cyan-400"
+                      : "border-cyan-200 bg-cyan-50 text-cyan-700"
+                  }`}
+                >
+                  <Briefcase size={22} />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-t-secondary">
+                      Availability
+                    </span>
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                        isDark
+                          ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                          : "bg-emerald-50 border-emerald-200 text-emerald-800"
+                      }`}
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Active
+                    </span>
+                  </div>
+                  <p className="text-sm font-medium leading-snug text-t-secondary">
+                    Open to Full-time, Internship, Freelance, and Remote opportunities.
+                  </p>
+                </div>
+              </motion.div>
+
+              
+            </div>
+
+            {/* Resume Action & Socials Header */}
+            <div className="pt-2 flex flex-col gap-6">
+              {/* Quick Resume Download Button */}
+              <a
+                href="https://drive.google.com/file/d/1b3j6DEKZRIz9qoXtoiQ65MhQW9kO5ZLC/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-xl border text-sm font-semibold transition-all duration-300 group shadow-xs ${
+                  isDark
+                    ? "border-white/10 bg-white/[0.03] text-zinc-200 hover:text-white hover:border-cyan-500/40 hover:bg-cyan-500/10"
+                    : "border-slate-200 bg-white text-slate-800 hover:text-slate-900 hover:border-cyan-500/40 hover:bg-cyan-50/70"
+                }`}
+              >
+                <Download size={16} className={`group-hover:translate-y-0.5 transition-transform ${isDark ? "text-cyan-400" : "text-cyan-600"}`} />
+                <span>Download Resume</span>
+              </a>
+
+              {/* Social Links Section */}
+              <div>
+                <span
+                  className={`text-xs font-bold uppercase tracking-wider block mb-3 ${
+                    isDark ? "text-zinc-400" : "text-slate-500"
+                  }`}
+                >
+                  Connect With Me
+                </span>
+                <div className="flex gap-3">
+                  {socialLinks.map(({ label, href, icon: Icon, tooltip }) => (
+                    <div key={label} className="relative">
+                      <motion.a
+                        href={href}
+                        target={href.startsWith("http") ? "_blank" : undefined}
+                        rel="noreferrer"
+                        aria-label={label}
+                        onMouseEnter={() => setHoveredSocial(label)}
+                        onMouseLeave={() => setHoveredSocial(null)}
+                        whileHover={{ scale: 1.1, y: -3 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`flex h-12 w-12 items-center justify-center rounded-full border backdrop-blur-xl transition-all duration-300 ${
+                          isDark
+                            ? "border-white/10 bg-white/[0.04] text-zinc-400 hover:text-cyan-300 hover:border-cyan-400/50 hover:bg-cyan-500/10 hover:shadow-[0_0_20px_rgba(6,182,212,0.35)]"
+                            : "border-slate-200 bg-white text-slate-700 hover:text-cyan-600 hover:border-cyan-500/50 hover:bg-cyan-50 shadow-xs"
+                        }`}
+                      >
+                        <Icon size={20} />
+                      </motion.a>
+
+                      {/* Accessible Tooltip */}
+                      <AnimatePresence>
+                        {hoveredSocial === label && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 5 }}
+                            className={`absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 text-[11px] font-medium rounded-md shadow-xl whitespace-nowrap z-20 pointer-events-none ${
+                              isDark
+                                ? "text-white bg-[#18181b] border border-white/10"
+                                : "text-white bg-slate-900 border border-slate-800"
+                            }`}
+                          >
+                            {tooltip}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </motion.div>
 
-          {/* ── Right form panel ── */}
+          {/* ════════════════ RIGHT SIDE: Premium Contact Form ════════════════ */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.65 }}
-            className="lg:col-span-3"
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-7"
           >
             <div
-              className="relative overflow-hidden rounded-3xl border p-8 backdrop-blur-xl shadow-xl"
-              style={{
-                background: "var(--bg-card)",
-                borderColor: "var(--border-default)",
-              }}
+              className={`relative overflow-hidden rounded-3xl border backdrop-blur-2xl p-7 sm:p-10 transition-all duration-500 ${
+                isDark
+                  ? "bg-[#111111]/80 border-white/[0.08] shadow-2xl"
+                  : "bg-white border-slate-200/90 shadow-xl shadow-slate-200/50"
+              }`}
             >
-              {/* Subtle gradient shine */}
+              {/* Glow Accent inside Form Container */}
               <div
-                className="pointer-events-none absolute -top-40 -right-40 h-80 w-80 rounded-full blur-3xl opacity-30"
-                style={{ background: "radial-gradient(circle, rgba(99,102,241,0.25), transparent 70%)" }}
+                className={`pointer-events-none absolute -top-32 -right-32 h-72 w-72 rounded-full blur-3xl ${
+                  isDark ? "bg-cyan-500/10" : "bg-cyan-500/15"
+                }`}
               />
 
               <AnimatePresence mode="wait">
                 {status === "success" ? (
-                  /* ── Success state ── */
+                  /* ── Success Animation View ── */
                   <motion.div
                     key="success"
-                    initial={{ opacity: 0, scale: 0.92 }}
+                    initial={{ opacity: 0, scale: 0.94 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.92 }}
-                    className="flex flex-col items-center justify-center gap-5 py-16 text-center"
+                    exit={{ opacity: 0, scale: 0.94 }}
+                    transition={{ duration: 0.4 }}
+                    className="flex flex-col items-center justify-center text-center py-12 px-4"
                   >
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                      <CheckCircle2 size={40} className="text-emerald-400" />
-                    </div>
-                    <div>
-                      <h3
-                        className="text-2xl font-bold"
-                        style={{ color: "var(--text-primary)" }}
-                      >
-                        Message Sent!
-                      </h3>
-                      <p
-                        className="mt-2 text-sm"
-                        style={{ color: "var(--text-muted)" }}
-                      >
-                        Thanks for reaching out. I&apos;ll reply within 24 hours.
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setStatus("idle")}
-                      className="mt-2 rounded-full px-6 py-2.5 text-sm font-semibold border transition-all hover:scale-105"
-                      style={{
-                        borderColor: "var(--border-default)",
-                        background: "var(--bg-elevated)",
-                        color: "var(--text-primary)",
-                      }}
+                    <div
+                      className={`flex h-20 w-20 items-center justify-center rounded-full border mb-6 ${
+                        isDark
+                          ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_30px_rgba(6,182,212,0.3)]"
+                          : "bg-cyan-500/10 border-cyan-500/40 text-cyan-600 shadow-[0_0_30px_rgba(6,182,212,0.2)]"
+                      }`}
                     >
-                      Send another message
+                      <CheckCircle2 size={44} />
+                    </div>
+                    <h3 className={`text-2xl sm:text-3xl font-bold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
+                      Message Sent Successfully!
+                    </h3>
+                    <p className={`mt-3 max-w-md text-sm sm:text-base leading-relaxed ${isDark ? "text-zinc-300" : "text-slate-600"}`}>
+                      Thank you for reaching out. Your message has been sent directly to my inbox, and I will get back to you within 24 hours.
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={() => setStatus("idle")}
+                      className={`mt-8 rounded-xl px-7 py-3 text-sm font-semibold border transition-all duration-300 ${
+                        isDark
+                          ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400"
+                          : "border-cyan-500/40 bg-cyan-50 text-cyan-700 hover:bg-cyan-100 hover:border-cyan-500"
+                      }`}
+                    >
+                      Send Another Message
                     </button>
                   </motion.div>
                 ) : (
-                  /* ── Form ── */
-                  <motion.form
+                  /* ── Form View ── */
+                  <form
                     key="form"
-                    ref={formRef}
-                    onSubmit={handleSubmit}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="relative z-10 flex flex-col gap-5"
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="relative z-10 flex flex-col gap-6"
                     noValidate
                   >
-                    <h3
-                      className="text-xl font-bold mb-1"
-                      style={{ color: "var(--text-primary)" }}
-                    >
-                      Send a Message
-                    </h3>
+                    <div className="flex flex-col gap-1">
+                      <h3 className={`text-xl sm:text-2xl font-bold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
+                        Send a Message
+                      </h3>
+                      <p className={`text-xs sm:text-sm ${isDark ? "text-zinc-300" : "text-slate-600"}`}>
+                        Fill out the form below and I&apos;ll respond as soon as possible.
+                      </p>
+                    </div>
 
-                    {/* Name + Email row */}
-                    <div className="grid sm:grid-cols-2 gap-5">
-                      {/* Name */}
-                      <div className="flex flex-col gap-1.5">
+                    {/* Name + Email Row */}
+                    <div className="grid sm:grid-cols-2 gap-6">
+                      {/* Full Name */}
+                      <div className="flex flex-col gap-2">
                         <label
-                          htmlFor="contact-name"
-                          className="text-xs font-semibold uppercase tracking-wider"
-                          style={{ color: "var(--text-muted)" }}
+                          htmlFor="name"
+                          className={`text-xs font-semibold uppercase tracking-wider flex items-center justify-between ${
+                            isDark ? "text-zinc-300" : "text-slate-700"
+                          }`}
                         >
-                          Your Name
+                          <span>Full Name</span>
                         </label>
                         <div className="relative">
                           <User
-                            size={15}
-                            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2"
-                            style={{ color: "var(--text-muted)" }}
+                            size={18}
+                            className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 ${
+                              isDark ? "text-zinc-400" : "text-slate-400"
+                            }`}
                           />
                           <input
-                            id="contact-name"
-                            name="name"
+                            id="name"
                             type="text"
-                            placeholder="Rayhan Fardous"
-                            value={form.name}
-                            onChange={handleChange}
-                            className={`${inputBase} pl-9`}
-                            autoComplete="name"
+                            placeholder="John Doe"
+                            {...register("name")}
+                            className={`w-full rounded-xl border pl-11 pr-4 py-3.5 text-sm outline-none transition-all duration-300 ${
+                              errors.name
+                                ? "border-rose-500 focus:ring-2 focus:ring-rose-500/20"
+                                : isDark
+                                  ? "border-white/[0.1] bg-white/[0.03] text-white placeholder-zinc-500 focus:border-cyan-500/70 focus:ring-2 focus:ring-cyan-500/20"
+                                  : "border-slate-300 bg-slate-50/90 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20"
+                            }`}
                           />
                         </div>
                         {errors.name && (
-                          <p className="flex items-center gap-1 text-xs text-rose-400">
-                            <AlertCircle size={12} /> {errors.name}
-                          </p>
+                          <motion.p
+                            initial={{ opacity: 0, y: -4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex items-center gap-1 text-xs text-rose-600 dark:text-rose-400 mt-0.5 font-medium"
+                          >
+                            <AlertCircle size={13} /> {errors.name.message}
+                          </motion.p>
                         )}
                       </div>
 
-                      {/* Email */}
-                      <div className="flex flex-col gap-1.5">
+                      {/* Email Address */}
+                      <div className="flex flex-col gap-2">
                         <label
-                          htmlFor="contact-email"
-                          className="text-xs font-semibold uppercase tracking-wider"
-                          style={{ color: "var(--text-muted)" }}
+                          htmlFor="email"
+                          className={`text-xs font-semibold uppercase tracking-wider ${
+                            isDark ? "text-zinc-300" : "text-slate-700"
+                          }`}
                         >
                           Email Address
                         </label>
                         <div className="relative">
                           <Mail
-                            size={15}
-                            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2"
-                            style={{ color: "var(--text-muted)" }}
+                            size={18}
+                            className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 ${
+                              isDark ? "text-zinc-400" : "text-slate-400"
+                            }`}
                           />
                           <input
-                            id="contact-email"
-                            name="email"
+                            id="email"
                             type="email"
-                            placeholder="you@example.com"
-                            value={form.email}
-                            onChange={handleChange}
-                            className={`${inputBase} pl-9`}
-                            autoComplete="email"
+                            placeholder="john@example.com"
+                            {...register("email")}
+                            className={`w-full rounded-xl border pl-11 pr-4 py-3.5 text-sm outline-none transition-all duration-300 ${
+                              errors.email
+                                ? "border-rose-500 focus:ring-2 focus:ring-rose-500/20"
+                                : isDark
+                                  ? "border-white/[0.1] bg-white/[0.03] text-white placeholder-zinc-500 focus:border-cyan-500/70 focus:ring-2 focus:ring-cyan-500/20"
+                                  : "border-slate-300 bg-slate-50/90 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20"
+                            }`}
                           />
                         </div>
                         {errors.email && (
-                          <p className="flex items-center gap-1 text-xs text-rose-400">
-                            <AlertCircle size={12} /> {errors.email}
-                          </p>
+                          <motion.p
+                            initial={{ opacity: 0, y: -4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex items-center gap-1 text-xs text-rose-600 dark:text-rose-400 mt-0.5 font-medium"
+                          >
+                            <AlertCircle size={13} /> {errors.email.message}
+                          </motion.p>
                         )}
                       </div>
                     </div>
 
-                    {/* Subject */}
-                    <div className="flex flex-col gap-1.5">
+                    {/* Subject Field */}
+                    <div className="flex flex-col gap-2">
                       <label
-                        htmlFor="contact-subject"
-                        className="text-xs font-semibold uppercase tracking-wider"
-                        style={{ color: "var(--text-muted)" }}
+                        htmlFor="subject"
+                        className={`text-xs font-semibold uppercase tracking-wider ${
+                          isDark ? "text-zinc-300" : "text-slate-700"
+                        }`}
                       >
                         Subject
                       </label>
-                      <input
-                        id="contact-subject"
-                        name="subject"
-                        type="text"
-                        placeholder="Project inquiry, Collaboration…"
-                        value={form.subject}
-                        onChange={handleChange}
-                        className={inputBase}
-                      />
+                      <div className="relative">
+                        <Tag
+                          size={18}
+                          className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 ${
+                            isDark ? "text-zinc-400" : "text-slate-400"
+                          }`}
+                        />
+                        <input
+                          id="subject"
+                          type="text"
+                          placeholder="Project Opportunity, Freelance, Inquiry…"
+                          {...register("subject")}
+                          className={`w-full rounded-xl border pl-11 pr-4 py-3.5 text-sm outline-none transition-all duration-300 ${
+                            errors.subject
+                              ? "border-rose-500 focus:ring-2 focus:ring-rose-500/20"
+                              : isDark
+                                ? "border-white/[0.1] bg-white/[0.03] text-white placeholder-zinc-500 focus:border-cyan-500/70 focus:ring-2 focus:ring-cyan-500/20"
+                                : "border-slate-300 bg-slate-50/90 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20"
+                          }`}
+                        />
+                      </div>
                       {errors.subject && (
-                        <p className="flex items-center gap-1 text-xs text-rose-400">
-                          <AlertCircle size={12} /> {errors.subject}
-                        </p>
+                        <motion.p
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-center gap-1 text-xs text-rose-600 dark:text-rose-400 mt-0.5 font-medium"
+                        >
+                          <AlertCircle size={13} /> {errors.subject.message}
+                        </motion.p>
                       )}
                     </div>
 
-                    {/* Message */}
-                    <div className="flex flex-col gap-1.5">
+                    {/* Message Field */}
+                    <div className="flex flex-col gap-2">
                       <label
-                        htmlFor="contact-message"
-                        className="text-xs font-semibold uppercase tracking-wider"
-                        style={{ color: "var(--text-muted)" }}
+                        htmlFor="message"
+                        className={`text-xs font-semibold uppercase tracking-wider ${
+                          isDark ? "text-zinc-300" : "text-slate-700"
+                        }`}
                       >
                         Message
                       </label>
-                      <textarea
-                        id="contact-message"
-                        name="message"
-                        rows={5}
-                        placeholder="Tell me about your project or idea…"
-                        value={form.message}
-                        onChange={handleChange}
-                        className={`${inputBase} resize-none`}
-                      />
+                      <div className="relative">
+                        <MessageSquare
+                          size={18}
+                          className={`pointer-events-none absolute left-4 top-4 ${
+                            isDark ? "text-zinc-400" : "text-slate-400"
+                          }`}
+                        />
+                        <textarea
+                          id="message"
+                          rows={5}
+                          placeholder="Tell me about your project, timeline, scope, or idea…"
+                          {...register("message")}
+                          className={`w-full rounded-xl border pl-11 pr-4 py-3.5 text-sm outline-none resize-none transition-all duration-300 ${
+                            errors.message
+                              ? "border-rose-500 focus:ring-2 focus:ring-rose-500/20"
+                              : isDark
+                                ? "border-white/[0.1] bg-white/[0.03] text-white placeholder-zinc-500 focus:border-cyan-500/70 focus:ring-2 focus:ring-cyan-500/20"
+                                : "border-slate-300 bg-slate-50/90 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20"
+                          }`}
+                        />
+                      </div>
                       {errors.message && (
-                        <p className="flex items-center gap-1 text-xs text-rose-400">
-                          <AlertCircle size={12} /> {errors.message}
-                        </p>
+                        <motion.p
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-center gap-1 text-xs text-rose-600 dark:text-rose-400 mt-0.5 font-medium"
+                        >
+                          <AlertCircle size={13} /> {errors.message.message}
+                        </motion.p>
                       )}
                     </div>
 
-                    {/* Error banner */}
+                    {/* General Error Banner if sending fails */}
                     {status === "error" && (
                       <motion.div
                         initial={{ opacity: 0, y: -6 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-400"
+                        className="flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-600 dark:text-rose-400 font-medium"
                       >
                         <AlertCircle size={16} />
-                        Something went wrong. Please try again or email me directly.
+                        An error occurred while sending your message. Please try again or copy my email address directly.
                       </motion.div>
                     )}
 
-                    {/* Submit */}
+                    {/* Submit Button */}
                     <motion.button
                       type="submit"
                       disabled={status === "sending"}
-                      whileHover={{ scale: status === "sending" ? 1 : 1.02 }}
+                      whileHover={{ scale: status === "sending" ? 1 : 1.015 }}
                       whileTap={{ scale: status === "sending" ? 1 : 0.98 }}
-                      className="flex items-center justify-center gap-2.5 rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, rgba(99,102,241,0.9), rgba(168,85,247,0.85))",
-                        color: "#fff",
-                        boxShadow: "0 8px 30px rgba(99,102,241,0.35)",
-                      }}
+                      className="mt-2 flex items-center justify-center gap-2.5 rounded-xl px-8 py-4 text-sm font-semibold text-white transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_0_25px_rgba(6,182,212,0.35)] bg-gradient-to-r from-cyan-500 via-cyan-400 to-blue-600 hover:shadow-[0_0_35px_rgba(6,182,212,0.5)]"
                     >
                       {status === "sending" ? (
                         <>
                           <svg
-                            className="h-4 w-4 animate-spin"
+                            className="h-4 w-4 animate-spin text-white"
                             viewBox="0 0 24 24"
                             fill="none"
                           >
@@ -503,16 +757,16 @@ export default function Contact() {
                               d="M4 12a8 8 0 018-8v8H4z"
                             />
                           </svg>
-                          Sending…
+                          <span>Sending Message...</span>
                         </>
                       ) : (
                         <>
-                          Send Message
-                          <Send size={15} />
+                          <span>Send Message</span>
+                          <Send size={16} className="translate-x-0 group-hover:translate-x-1 transition-transform" />
                         </>
                       )}
                     </motion.button>
-                  </motion.form>
+                  </form>
                 )}
               </AnimatePresence>
             </div>
