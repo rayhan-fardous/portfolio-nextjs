@@ -44,7 +44,7 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-base text-t-primary transition-colors duration-300">
+      <body className="min-h-full flex flex-col bg-base-bg text-t-primary transition-colors duration-300">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

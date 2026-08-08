@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/components/ThemeProvider";
 import {
@@ -15,12 +16,12 @@ import {
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 const quickLinks = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Projects", href: "#projects" },
-  { label: "Experience", href: "#experience" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/#home" },
+  { label: "About", href: "/#about" },
+  { label: "Skills", href: "/#skills" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Experience", href: "/#experience" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 const socialLinks = [
@@ -44,7 +45,7 @@ const socialLinks = [
   },
   {
     label: "Resume",
-    href: "https://drive.google.com/file/d/1b3j6DEKZRIz9qoXtoiQ65MhQW9kO5ZLC/view?usp=sharing",
+    href: "https://drive.google.com/file/d/1-nIS_-XLjVmOce37BgEpLQ5R3bVWcl1V/view?usp=sharing",
     icon: FileText,
     tooltip: "Download / Request Resume",
   },
@@ -57,6 +58,7 @@ export default function Footer() {
   // Match the subtle grid opacity of Hero, About, and Skills sections
   const gridLine = isDark ? "rgba(255, 255, 255, 0.025)" : "rgba(99, 102, 241, 0.06)";
 
+  const pathname = usePathname();
   const [showTopBtn, setShowTopBtn] = useState(false);
   const [hoveredSocial, setHoveredSocial] = useState(null);
   const currentYear = new Date().getFullYear();
@@ -83,9 +85,13 @@ export default function Footer() {
   };
 
   const scrollToSection = (e, href) => {
-    if (href.startsWith("#")) {
+    if (pathname !== "/") {
+      return;
+    }
+    const hashIndex = href.indexOf("#");
+    if (hashIndex !== -1) {
+      const targetId = href.slice(hashIndex + 1);
       e.preventDefault();
-      const targetId = href.replace("#", "");
       if (targetId === "home" || !targetId) {
         scrollToTop();
         return;
@@ -135,8 +141,8 @@ export default function Footer() {
           {/* Left Column: Personal Branding & Availability */}
           <div className="lg:col-span-5 flex flex-col gap-5">
             <Link
-              href="#home"
-              onClick={(e) => scrollToSection(e, "#home")}
+              href="/#home"
+              onClick={(e) => scrollToSection(e, "/#home")}
               className="inline-flex items-center gap-3 group w-fit"
             >
               <div
@@ -287,25 +293,11 @@ export default function Footer() {
 
         {/* ── Bottom Section (Copyright & Credits) ── */}
         <div
-          className={`pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs ${
+          className={`pt-8 flex justify-center text-center text-xs ${
             isDark ? "text-zinc-400" : "text-slate-600"
           }`}
         >
-          {/* Left: Copyright & Tech Stack */}
-          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
-            <p>© {currentYear} Md Rayhan Ul Fardous. All rights reserved.</p>
-            <span className={`hidden sm:inline ${isDark ? "text-zinc-700" : "text-slate-300"}`}>•</span>
-            <p className={`font-medium ${isDark ? "text-zinc-300" : "text-slate-800"}`}>
-              Built with Next.js • React • Tailwind CSS
-            </p>
-          </div>
-
-          {/* Right: Made with heart */}
-          <div className={`flex items-center gap-1.5 font-medium ${isDark ? "text-zinc-300" : "text-slate-800"}`}>
-            <span>Made with</span>
-            <Heart size={13} className="text-rose-500 fill-rose-500 animate-pulse" />
-            <span>in Bangladesh</span>
-          </div>
+          <p>© {currentYear} Md Rayhan Ul Fardous. All rights reserved.</p>
         </div>
       </div>
 

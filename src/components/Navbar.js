@@ -56,6 +56,13 @@ export default function Navbar() {
     };
   }, [isOpen]);
 
+  // Set active tab to projects if on a projects route
+  useEffect(() => {
+    if (pathname && pathname.startsWith("/projects")) {
+      setActiveSection("projects");
+    }
+  }, [pathname]);
+
   // ScrollSpy using IntersectionObserver
   useEffect(() => {
     if (pathname !== "/") return;

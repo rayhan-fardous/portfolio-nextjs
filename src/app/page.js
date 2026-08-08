@@ -9,7 +9,7 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-base transition-colors duration-500">
+    <div className="flex flex-col min-h-screen bg-base-bg transition-colors duration-500">
       {/* Premium Glassmorphic Navbar */}
       <Navbar />
 

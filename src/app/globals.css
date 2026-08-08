@@ -17,8 +17,8 @@
   --border-default: rgba(99, 102, 241, 0.18);
 
   --text-primary:   #0c0e1f;
-  --text-secondary: #3c4275;
-  --text-muted:     #7880b0;
+  --text-secondary: #2d325a;
+  --text-muted:     #555a82;
 
   --accent-green:   #10b981;
   --accent-rose:    #f43f5e;
@@ -54,7 +54,7 @@
 /* ═══════════════════════════════════════════════
    DARK THEME  (.dark class on <html>)
    Modern dark: deep cosmic navy-indigo palette
-═══════════════════════════════════════════════ */
+ ═══════════════════════════════════════════════ */
 .dark {
   --bg-base:        #04061a;
   --bg-surface:     #0b0f2e;
@@ -65,8 +65,8 @@
   --border-default: rgba(255, 255, 255, 0.11);
 
   --text-primary:   #eef0ff;
-  --text-secondary: #9fa8d9;
-  --text-muted:     #5b6390;
+  --text-secondary: #b0b7e2;
+  --text-muted:     #7f87b2;
 
   --accent-green:   #34d399;
   --accent-rose:    #fb7185;
@@ -103,7 +103,7 @@
    Tailwind v4 — expose tokens as utility classes
 ═══════════════════════════════════════════════ */
 @theme inline {
-  --color-base:      var(--bg-base);
+  --color-base-bg:   var(--bg-base);
   --color-surface:   var(--bg-surface);
   --color-elevated:  var(--bg-elevated);
   --color-t-primary:   var(--text-primary);
