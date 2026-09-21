@@ -314,7 +314,7 @@ export default function Hero() {
               </Link>
 
               <a
-                href="https://drive.google.com/file/d/1-nIS_-XLjVmOce37BgEpLQ5R3bVWcl1V/view?usp=sharing"
+                href="https://drive.google.com/file/d/13xzNfAbTDsvgkufql0RcAVoX7w-rQaAX/view"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"

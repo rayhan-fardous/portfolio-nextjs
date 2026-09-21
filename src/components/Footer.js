@@ -45,7 +45,7 @@ const socialLinks = [
   },
   {
     label: "Resume",
-    href: "https://drive.google.com/file/d/1-nIS_-XLjVmOce37BgEpLQ5R3bVWcl1V/view?usp=sharing",
+    href: "https://drive.google.com/file/d/13xzNfAbTDsvgkufql0RcAVoX7w-rQaAX/view",
     icon: FileText,
     tooltip: "Download / Request Resume",
   },

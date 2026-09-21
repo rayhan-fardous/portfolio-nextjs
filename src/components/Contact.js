@@ -399,7 +399,7 @@ export default function Contact() {
             <div className="pt-2 flex flex-col gap-6">
               {/* Quick Resume Download Button */}
               <a
-                href="https://drive.google.com/file/d/1-nIS_-XLjVmOce37BgEpLQ5R3bVWcl1V/view?usp=sharing"
+                href="https://drive.google.com/file/d/13xzNfAbTDsvgkufql0RcAVoX7w-rQaAX/view"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-xl border text-sm font-semibold transition-all duration-300 group shadow-xs ${
