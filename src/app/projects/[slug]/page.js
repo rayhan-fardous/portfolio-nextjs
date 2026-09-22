@@ -3,23 +3,20 @@ import Image from "next/image";
 import { ArrowLeft, ArrowUpRight, Check, Code2, Layers3, ExternalLink, Sparkles } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import { notFound } from "next/navigation";
-import { getProject, projects } from "@/data/projects";
+import { getPortfolioContent } from "@/lib/content";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-export function generateStaticParams() {
-  return projects.map(({ slug }) => ({ slug }));
-}
-
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = (await getPortfolioContent()).projects.find((item) => item.slug === slug);
   return { title: project ? `${project.title} | Case Study` : "Project Not Found" };
 }
 
 export default async function ProjectPage({ params }) {
   const { slug } = await params;
-  const project = getProject(slug);
+  const { projects } = await getPortfolioContent();
+  const project = projects.find((item) => item.slug === slug);
   if (!project) notFound();
 
   // Find index for next/prev project navigation

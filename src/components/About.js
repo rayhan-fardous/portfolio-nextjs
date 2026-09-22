@@ -171,6 +171,8 @@ const coreValues = [
 export default function About() {
   const { theme } = useTheme();
   const dark = theme === "dark";
+  const [about, setAbout] = useState({ title: "Crafting Scalable Web Applications", paragraphs: [] });
+  useEffect(() => { fetch("/api/content").then((r) => r.ok && r.json()).then((data) => data?.about && setAbout(data.about)).catch(() => {}); }, []);
 
   /* ── Theme Tokens ─────────────────────────────────── */
   const t = {
@@ -306,18 +308,14 @@ export default function About() {
                 style={{ color: t.heading }}
               >
                 <span className="w-8 h-1 rounded-full bg-cyan-500 inline-block" />
-                Crafting Scalable Web Applications
+                {about.title}
               </h3>
 
               <p
                 className="text-base sm:text-lg leading-relaxed transition-colors duration-500"
                 style={{ color: t.body }}
               >
-                My journey in software development is driven by a deep passion
-                for transforming complex ideas into intuitive, high-performance
-                web applications. I specialize in the modern web stack—building
-                scalable frontends with <strong className="font-semibold text-cyan-400">Next.js &amp; React</strong>,
-                and architecting robust backends using <strong className="font-semibold text-cyan-400">Node.js, Express &amp; MongoDB</strong>.
+                {about.paragraphs[0] || "My journey in software development is driven by a deep passion for transforming complex ideas into intuitive, high-performance web applications."}
               </p>
             </motion.div>
 
@@ -326,11 +324,7 @@ export default function About() {
                 className="text-base sm:text-lg leading-relaxed transition-colors duration-500"
                 style={{ color: t.body }}
               >
-                I strongly believe that good software goes beyond functional
-                code—it requires clean architecture, seamless visual design,
-                and optimal performance. I strive for code maintainability,
-                rigorous debugging, and writing modular components that scale
-                effortlessly over time.
+                {about.paragraphs[1] || "I strongly believe that good software goes beyond functional code—it requires clean architecture, seamless visual design, and optimal performance."}
               </p>
             </motion.div>
 
@@ -339,10 +333,7 @@ export default function About() {
                 className="text-base sm:text-lg leading-relaxed transition-colors duration-500"
                 style={{ color: t.body }}
               >
-                With a continuous learning mindset, I consistently explore emerging web
-                technologies, UI/UX trends, and system design practices. My goal
-                is to build impactful, user-focused products and collaborate with
-                forward-thinking engineering teams to create remarkable digital solutions.
+                {about.paragraphs[2] || "With a continuous learning mindset, I consistently explore emerging web technologies, UI/UX trends, and system design practices."}
               </p>
             </motion.div>
           </motion.div>

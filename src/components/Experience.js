@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   GraduationCap,
@@ -91,6 +91,8 @@ export default function Experience() {
   const { theme } = useTheme();
   const dark = theme === "dark";
   const [activeFilter, setActiveFilter] = useState("all");
+  const [items, setItems] = useState(timelineItems);
+  useEffect(() => { fetch("/api/content").then((r) => r.ok && r.json()).then((data) => data?.experience && setItems(data.experience.map((item) => ({ ...item, icon: item.category === "education" ? GraduationCap : item.category === "experience" ? Briefcase : Award })))).catch(() => {}); }, []);
 
   /* ── Theme Tokens ─────────────────────────────────── */
   const t = {
@@ -134,8 +136,8 @@ export default function Experience() {
 
   const filteredItems =
     activeFilter === "all"
-      ? timelineItems
-      : timelineItems.filter((item) => item.category === activeFilter);
+      ? items
+      : items.filter((item) => item.category === activeFilter);
 
   return (
     <section

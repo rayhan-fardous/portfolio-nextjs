@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, FolderKanban, Sparkles } from "lucide-react";
@@ -12,6 +12,8 @@ export default function Projects() {
   const { theme } = useTheme();
   const dark = theme === "dark";
   const [activeImageIndex, setActiveImageIndex] = useState({});
+  const [projectItems, setProjectItems] = useState(projects);
+  useEffect(() => { fetch("/api/content").then((r) => r.ok && r.json()).then((data) => data?.projects && setProjectItems(data.projects)).catch(() => {}); }, []);
 
   const handleImageSwitch = (slug, index, e) => {
     e.preventDefault();
@@ -130,14 +132,14 @@ export default function Projects() {
               href="/projects"
               className="inline-flex items-center gap-2 rounded-full bg-cyan-600 px-6 py-3 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-cyan-600/20 transition hover:bg-cyan-500 hover:scale-105"
             >
-              View Full List of Projects ({projects.length}) <ArrowUpRight size={16} />
+              View Full List of Projects ({projectItems.length}) <ArrowUpRight size={16} />
             </Link>
           </div>
         </div>
 
         {/* Featured Projects Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project, index) => {
+          {projectItems.map((project, index) => {
             const currentImgIdx = activeImageIndex[project.slug] || 0;
             const activeImgSrc = project.images[currentImgIdx];
 

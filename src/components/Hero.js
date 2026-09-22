@@ -35,7 +35,7 @@ const socialLinks = [
   { label: "WhatsApp",  href: "https://wa.me/+8801785473355",                 icon: MessageCircle },
 ];
 
-const words = ["Full Stack Developer", "MERN Stack Engineer", "Next.js Specialist"];
+const defaultHero = { firstName: "Md Rayhan", lastName: "ul Fardous", roles: ["Full Stack Developer", "MERN Stack Engineer", "Next.js Specialist"], headline: "Building fast, scalable & beautiful web experiences that users love.", description: "Specializing in modern web technologies — from pixel-perfect UIs to robust backends. I transform complex ideas into clean, high-performance digital products.", image: "/rayhan.jpg", resumeUrl: "https://drive.google.com/file/d/13xzNfAbTDsvgkufql0RcAVoX7w-rQaAX/view" };
 
 /* ─── Mouse Parallax Hook ─────────────────────────────── */
 function useMouseParallax(strength = 0.012) {
@@ -77,11 +77,14 @@ export default function Hero() {
   const dark = theme === "dark";
   const { springX, springY } = useMouseParallax(0.012);
   const [wordIndex, setWordIndex] = useState(0);
+  const [hero, setHero] = useState(defaultHero);
+
+  useEffect(() => { fetch("/api/content").then((r) => r.ok && r.json()).then((data) => data?.hero && setHero(data.hero)).catch(() => {}); }, []);
 
   useEffect(() => {
-    const id = setInterval(() => setWordIndex((i) => (i + 1) % words.length), 2800);
+    const id = setInterval(() => setWordIndex((i) => (i + 1) % hero.roles.length), 2800);
     return () => clearInterval(id);
-  }, []);
+  }, [hero.roles.length]);
 
   /* ── Theme tokens ─────────────────────────────────── */
   const t = {
@@ -230,12 +233,12 @@ export default function Hero() {
                 className="text-5xl sm:text-6xl lg:text-[68px] font-bold tracking-tight leading-[1.05] transition-colors duration-500"
                 style={{ color: t.nameColor }}
               >
-                Md Rayhan
+                {hero.firstName}
                 <span
                   className="block text-transparent bg-clip-text"
                   style={{ backgroundImage: "linear-gradient(135deg, #22D3EE 0%, #06B6D4 50%, #818cf8 100%)" }}
                 >
-                  ul Fardous
+                  {hero.lastName}
                 </span>
               </h1>
             </motion.div>
@@ -246,14 +249,14 @@ export default function Hero() {
                 <span className="w-5 h-px bg-cyan-500/50" />
                 <AnimatePresence mode="wait">
                   <motion.span
-                    key={words[wordIndex]}
+                    key={hero.roles[wordIndex]}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.4, ease: "easeInOut" }}
                     className="text-base sm:text-lg font-medium text-cyan-500 tracking-wide"
                   >
-                    {words[wordIndex]}
+                    {hero.roles[wordIndex]}
                   </motion.span>
                 </AnimatePresence>
               </div>
@@ -266,10 +269,7 @@ export default function Hero() {
               className="text-xl sm:text-2xl font-semibold leading-relaxed max-w-xl transition-colors duration-500"
               style={{ color: t.headlineColor }}
             >
-              Building{" "}
-              <span style={{ color: t.emphasisColor }}>fast, scalable</span> &amp;{" "}
-              <span style={{ color: t.emphasisColor }}>beautiful</span> web experiences
-              that users love.
+              {hero.headline}
             </motion.h2>
 
             {/* Description */}
@@ -279,9 +279,7 @@ export default function Hero() {
               className="text-base leading-relaxed max-w-lg transition-colors duration-500"
               style={{ color: t.bodyColor }}
             >
-              Specializing in modern web technologies — from pixel-perfect UIs to
-              robust backends. I transform complex ideas into clean, high-performance
-              digital products.
+              {hero.description}
             </motion.p>
 
             {/* Tech pills */}
@@ -314,7 +312,7 @@ export default function Hero() {
               </Link>
 
               <a
-                href="https://drive.google.com/file/d/13xzNfAbTDsvgkufql0RcAVoX7w-rQaAX/view"
+                href={hero.resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
@@ -405,11 +403,12 @@ export default function Hero() {
                   }}
                 >
                   <Image
-                    src="/rayhan.jpg"
-                    alt="Md Rayhan Ul Fardous — Full Stack Developer"
+                    src={hero.image}
+                    alt={`${hero.firstName} ${hero.lastName} — Full Stack Developer`}
                     fill
                     sizes="(max-width: 640px) 300px, (max-width: 768px) 340px, 380px"
                     priority
+                    unoptimized
                     className="object-cover object-top"
                   />
                   {/* Overlay */}

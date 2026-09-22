@@ -48,14 +48,12 @@ export default function AllProjectsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [activeImageIndex, setActiveImageIndex] = useState({}); // { slug: index }
+  const [projectItems, setProjectItems] = useState(projects);
+  useEffect(() => { fetch("/api/content").then((r) => r.ok && r.json()).then((data) => data?.projects && setProjectItems(data.projects)).catch(() => {}); }, []);
   
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 4;
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, selectedCategory]);
-  
   // Lightbox state
   const [lightbox, setLightbox] = useState({
     isOpen: false,
@@ -69,7 +67,7 @@ export default function AllProjectsPage() {
 
   // Filter projects based on search query and category
   const filteredProjects = useMemo(() => {
-    return projects.filter((project) => {
+    return projectItems.filter((project) => {
       const matchesCategory =
         selectedCategory === "All" || project.category === selectedCategory;
       const query = searchQuery.toLowerCase().trim();
@@ -82,7 +80,7 @@ export default function AllProjectsPage() {
 
       return matchesCategory && matchesSearch;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, projectItems]);
 
   const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
   const paginatedProjects = filteredProjects.slice(
